@@ -15,9 +15,14 @@ class MainController(
     val problemRepository: ProblemRepository,
     val solutionRepository: SolutionRepository
 ) {
+    @GetMapping("/problem/get")
+    @ResponseBody
+    fun getProblems() =
+        problemRepository.findAll().sortBy { it.id }
+
     @GetMapping("/problem/get/{id}")
     @ResponseBody
-    fun get(@PathVariable id: Long) =
+    fun getProblem(@PathVariable id: Long) =
         problemRepository.getReferenceById(id)
 
     @GetMapping("/solution/get/{id}")
@@ -28,7 +33,7 @@ class MainController(
     @GetMapping("/best/{id}")
     @ResponseBody
     fun getBestSolution(@PathVariable id: Long) =
-        solutionRepository.findBest(get(id))
+        solutionRepository.findBest(getProblem(id))
 
     @PostMapping("/problem/add/{id}")
     @ResponseBody
@@ -38,9 +43,11 @@ class MainController(
     @PostMapping("/add/{id}")
     @ResponseBody
     fun addSolution(@PathVariable id: Long, @RequestBody solution: String, calc: Boolean = false) =
-        solutionRepository.save(Solution(problem = get(id), solution = solution).apply {
+        Solution(problem = getProblem(id), solution = solution).apply {
             if (calc) {
                 score = calcMetric.calcMetric(this)
             }
-        })
+        }.let {
+            solutionRepository.save(it)
+        }
 }
