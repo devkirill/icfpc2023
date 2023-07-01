@@ -10,5 +10,9 @@ import jakarta.persistence.Table
 data class Problem(
     @Id
     @Column
-    val id: Long
+    val id: Long,
+    @Column
+    var lastSendedId: Long? = null,
+    @Column
+    var bestScore: Long? = null
 )

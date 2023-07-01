@@ -10,5 +10,6 @@ spring:
     hibernate:
       ddl-auto: update
 
-scheduler:
-  scores: false
+service:
+  calc: false
+  upload: false
