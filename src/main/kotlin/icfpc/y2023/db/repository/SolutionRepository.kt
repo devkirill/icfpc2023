@@ -12,3 +12,6 @@ interface SolutionRepository : JpaRepository<Solution, Long> {
 }
 
 fun SolutionRepository.findBest(problem: Problem) = findFirstByProblemAndScoreIsNotNullOrderByScoreAscIdAsc(problem)
+
+fun SolutionRepository.findBest(problem: Problem, limit: Int) =
+    findAllByProblemAndScoreIsNotNullOrderByScoreAscIdAsc(problem, Pageable.ofSize(limit))

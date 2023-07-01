@@ -6,7 +6,6 @@ import icfpc.y2023.db.model.Solution
 import icfpc.y2023.db.repository.ProblemRepository
 import icfpc.y2023.db.repository.SolutionRepository
 import icfpc.y2023.db.repository.findBest
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
@@ -34,7 +33,7 @@ class MainController(
     @GetMapping("/best/{id}/{limit}")
     @ResponseBody
     fun getSolutions(@PathVariable id: Long, @PathVariable limit: Int) =
-        solutionRepository.findAllByProblemAndScoreIsNotNullOrderByScoreAscIdAsc(getProblem(id), Pageable.ofSize(limit))
+        solutionRepository.findBest(getProblem(id), limit)
 
     @GetMapping("/best/{id}")
     @ResponseBody
