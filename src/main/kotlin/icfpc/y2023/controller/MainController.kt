@@ -38,7 +38,9 @@ class MainController(
     @PostMapping("/problem/add/{id}")
     @ResponseBody
     fun addProblem(@PathVariable id: Long) =
-        problemRepository.save(Problem(id))
+        problemRepository.save(Problem(id)).apply {
+            addSolution(id, solution = "", calc = true)
+        }
 
     @PostMapping("/add/{id}")
     @ResponseBody
