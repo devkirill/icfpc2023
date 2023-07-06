@@ -1,9 +1,9 @@
-package icfpc.y2023.service
+package icfpc.y2023.scheduled
 
-import icfpc.y2023.UploadService
 import icfpc.y2023.db.repository.ProblemRepository
 import icfpc.y2023.db.repository.SolutionRepository
 import icfpc.y2023.db.repository.findBest
+import icfpc.y2023.service.UploadService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
@@ -21,7 +21,7 @@ class UploadBestSolutionsService(
     fun update() {
         problemRepository.findAll().sortedBy { it.id }.forEach { problem ->
             try {
-                val solution = solutionRepository.findBest(problem)
+                val solution = solutionRepository.findBest(problem) ?: return@forEach
                 if (problem.bestScore == null || solution.score!! < problem.bestScore!!) {
                     uploadService.upload(solution)
                 }

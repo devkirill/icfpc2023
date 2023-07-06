@@ -5,8 +5,8 @@ import icfpc.y2023.db.model.Solution
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface SolutionRepository : JpaRepository<Solution, Long> {
-    fun findFirstByProblemAndScoreIsNotNullOrderByScoreAscIdAsc(problem: Problem): Solution
+interface SolutionRepository : JpaRepository<Solution, Int> {
+    fun findFirstByProblemAndScoreIsNotNullOrderByScoreAscIdAsc(problem: Problem): Solution?
     fun findAllByScoreIsNull(): List<Solution>
     fun findAllByProblemAndScoreIsNotNullOrderByScoreAscIdAsc(problem: Problem, pageable: Pageable): List<Solution>
 }

@@ -1,7 +1,7 @@
-package icfpc.y2023.service
+package icfpc.y2023.scheduled
 
-import icfpc.y2023.CalcMetric
 import icfpc.y2023.db.repository.SolutionRepository
+import icfpc.y2023.service.CalcMetric
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled

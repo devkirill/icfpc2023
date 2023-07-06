@@ -13,3 +13,5 @@ spring:
 service:
   calc: false
   upload: false
+
+token: ''

@@ -9,13 +9,13 @@ data class Solution(
     @Id
     @GeneratedValue
     @Column
-    val id: Long? = null,
+    val id: Int? = null,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     @JsonIgnore
     val problem: Problem,
     @Column
-    val solution: String,
+    val contents: String,
     @Column
     var score: Long? = null
 ) {
