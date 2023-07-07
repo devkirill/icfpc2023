@@ -1,7 +1,9 @@
 package icfpc.y2023.utils
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.net.HttpURLConnection
 import java.net.URL
 
 fun readUrl(urlString: String): String {
@@ -19,4 +21,18 @@ fun readUrl(urlString: String): String {
         reader?.close()
     }
     return result
+}
+
+fun <A> URL.send(obj: A) {
+    val json = ObjectMapper().writeValueAsString(obj)
+    val con: HttpURLConnection = this.openConnection() as HttpURLConnection
+    con.setRequestMethod("POST")
+    con.setRequestProperty("Content-Type", "application/json")
+    con.setDoOutput(true)
+    con.outputStream.use { os ->
+        val input = json.toByteArray(charset("utf-8"))
+        os.write(input, 0, input.size)
+    }
+    println(con.responseCode)
+    println(con.responseMessage)
 }

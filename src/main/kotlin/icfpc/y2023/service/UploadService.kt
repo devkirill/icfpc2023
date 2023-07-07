@@ -3,6 +3,8 @@ package icfpc.y2023.service
 import com.fasterxml.jackson.databind.ObjectMapper
 import icfpc.y2023.db.model.Solution
 import icfpc.y2023.db.repository.ProblemRepository
+import icfpc.y2023.db.repository.SolutionRepository
+import icfpc.y2023.db.repository.findBest
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -14,9 +16,24 @@ import kotlin.math.min
 @Service
 class UploadService(
     val problemRepository: ProblemRepository,
+    val solutionRepository: SolutionRepository,
     @Value("\${token}")
     val token: String,
 ) {
+    @Transactional
+    fun uploadBests() {
+        problemRepository.findAll().sortedBy { it.id }.forEach { problem ->
+            try {
+                val solution = solutionRepository.findBest(problem) ?: return@forEach
+                if (problem.bestScore == null || solution.score!! > problem.bestScore!!) {
+                    upload(solution)
+                }
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     @Transactional
     fun upload(solution: Solution) {
         if (token.isBlank()) {

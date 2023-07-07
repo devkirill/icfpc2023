@@ -23,8 +23,10 @@ class LoadProblemsService(val problemRepository: ProblemRepository) {
                 minimizeJson(it)
             }
             problemRepository.findById(it).ifPresentOrElse({ problem ->
-                problem.problem = json
-                problemRepository.save(problem)
+                if (problem.problem != json) {
+                    problem.problem = json
+                    problemRepository.save(problem)
+                }
             }, {
                 problemRepository.save(Problem(id = it, problem = json))
             })
