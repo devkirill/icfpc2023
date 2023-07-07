@@ -11,13 +11,14 @@ import org.springframework.stereotype.Service
 class LoadProblemsService(val problemRepository: ProblemRepository) {
     fun getProblemsCount(): Int {
         val html = readUrl("https://www.icfpcontest.com/problems")
-        val results = Regex("\"numberOfProblems\":(\\d)+\\b").find(html)
+        val results = Regex("\"numberOfProblems\":(\\d+)\\b").find(html)
         return results?.groups?.get(1)?.value?.toInt() ?: 0
     }
 
     @Transactional
     fun loadProblems() {
         (1..getProblemsCount()).map {
+            // https://api.icfpcontest.com/problem?problem_id=1
             val json = readUrl("https://cdn.icfpcontest.com/problems/$it.json").let {
                 minimizeJson(it)
             }

@@ -17,7 +17,7 @@ class UploadBestSolutionsService(
     val solutionRepository: SolutionRepository,
     val uploadService: UploadService
 ) {
-    @Scheduled(fixedRateString = "2000")
+    @Scheduled(fixedRateString = "30000")
     fun update() {
         problemRepository.findAll().sortedBy { it.id }.forEach { problem ->
             try {

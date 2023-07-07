@@ -16,27 +16,31 @@ class MainController(
     val solutionRepository: SolutionRepository,
     val loadProblemsService: LoadProblemsService
 ) {
-    @GetMapping("/problem/get")
-    @ResponseBody
-    fun getProblems() =
-        problemRepository.findAll().sortedBy { it.id }
+//    @GetMapping("/problem/get")
+//    @ResponseBody
+//    fun getProblems() =
+//        problemRepository.findAll().sortedBy { it.id }
 
-    @GetMapping("/problem/get/{id}")
+    @GetMapping("/problem/get/{id}", produces = ["application/json"])
     @ResponseBody
     fun getProblem(@PathVariable id: Int) =
         problemRepository.getReferenceById(id)
 
-    @GetMapping("/solution/get/{id}")
+    @GetMapping("/problem/{id}", produces = ["application/json"])
+    @ResponseBody
+    fun getProblemTask(@PathVariable id: Int) = getProblem(id).problem
+
+    @GetMapping("/solution/get/{id}", produces = ["application/json"])
     @ResponseBody
     fun getSolution(@PathVariable id: Int) =
         solutionRepository.getReferenceById(id)
 
-    @GetMapping("/best/{id}/{limit}")
+    @GetMapping("/best/{id}/{limit}", produces = ["application/json"])
     @ResponseBody
     fun getSolutions(@PathVariable id: Int, @PathVariable limit: Int) =
         solutionRepository.findBest(getProblem(id), limit)
 
-    @GetMapping("/best/{id}")
+    @GetMapping("/best/{id}", produces = ["application/json"])
     @ResponseBody
     fun getBestSolution(@PathVariable id: Int) =
         solutionRepository.findBest(getProblem(id))
@@ -48,13 +52,13 @@ class MainController(
 //            addSolution(id, solution = "", calc = true)
 //        }
 
-    @GetMapping("/problems/read")
+    @GetMapping("/problems/read", produces = ["application/json"])
     @ResponseBody
     fun readProblems() {
         loadProblemsService.loadProblems()
     }
 
-    @PostMapping("/add/{id}")
+    @PostMapping("/add/{id}", produces = ["application/json"])
     @ResponseBody
     fun addSolution(@PathVariable id: Int, @RequestBody solution: String, calc: Boolean = false) =
         Solution(problem = getProblem(id), contents = solution).apply {
