@@ -13,6 +13,7 @@ import icfpc.y2023.service.LoadProblemsService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.view.RedirectView
 
 @Controller
 class MainController(
@@ -22,6 +23,11 @@ class MainController(
     val loadProblemsService: LoadProblemsService,
     val problemContentRepository: ProblemContentRepository
 ) {
+    @GetMapping("/")
+    fun index(): RedirectView {
+        return RedirectView("/index.html")
+    }
+
     @GetMapping("/problems")
     @ResponseBody
     fun getProblems(response: HttpServletResponse): List<Problem> {
