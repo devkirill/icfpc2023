@@ -2,6 +2,7 @@ package icfpc.y2023.controller
 
 import icfpc.y2023.db.model.Problem
 import icfpc.y2023.db.model.Solution
+import icfpc.y2023.db.repository.ProblemContentRepository
 import icfpc.y2023.db.repository.ProblemRepository
 import icfpc.y2023.db.repository.SolutionRepository
 import icfpc.y2023.db.repository.findBest
@@ -18,12 +19,15 @@ class MainController(
     val calcMetric: CalcScoringService,
     val problemRepository: ProblemRepository,
     val solutionRepository: SolutionRepository,
-    val loadProblemsService: LoadProblemsService
+    val loadProblemsService: LoadProblemsService,
+    val problemContentRepository: ProblemContentRepository
 ) {
-//    @GetMapping("/problem/get")
-//    @ResponseBody
-//    fun getProblems() =
-//        problemRepository.findAll().sortedBy { it.id }
+    @GetMapping("/problems")
+    @ResponseBody
+    fun getProblems(response: HttpServletResponse): List<Problem> {
+        response.setHeader("Access-Control-Allow-Origin", "*")
+        return problemRepository.findAll().sortedBy { it.id }
+    }
 
     //    @GetMapping("/problem/get/{id}", produces = ["application/json"])
 //    @ResponseBody
@@ -36,7 +40,8 @@ class MainController(
     @ResponseBody
     fun getProblemTask(@PathVariable id: Int, response: HttpServletResponse): Task {
         response.setHeader("Access-Control-Allow-Origin", "*")
-        return getProblem(id).problem.content
+        val contentId = getProblem(id).problemId
+        return problemContentRepository.getReferenceById(contentId).content
     }
 
     @GetMapping("/solution/get/{id}", produces = ["application/json"])
@@ -88,7 +93,8 @@ class MainController(
         response.setHeader("Access-Control-Allow-Origin", "*")
         return Solution(problem = getProblem(id), contents = Solve.parse(solution)).apply {
             if (calc) {
-                score = calcMetric.calc(this)
+                val contentId = getProblem(id).problemId
+                score = calcMetric.calc(problemContentRepository.getReferenceById(contentId).content, this.contents)
             }
         }.let {
             solutionRepository.save(it)

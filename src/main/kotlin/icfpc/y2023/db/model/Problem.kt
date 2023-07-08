@@ -1,6 +1,5 @@
 package icfpc.y2023.db.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import icfpc.y2023.model.Task
 import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
@@ -12,10 +11,8 @@ data class Problem(
     @Id
     @Column
     val id: Int,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    @JsonIgnore
-    var problem: ProblemContent,
+    @Column
+    var problemId: Int,
     @Column
     var lastSendedId: Int? = null,
     @Column

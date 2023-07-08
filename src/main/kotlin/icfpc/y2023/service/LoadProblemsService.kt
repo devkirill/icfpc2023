@@ -30,13 +30,15 @@ class LoadProblemsService(
             }
             val task = Task.parse(json)
             problemRepository.findById(it).ifPresentOrElse({ problem ->
-                if (problem.problem.content != task) {
-                    problem.problem = problemContentRepository.save(ProblemContent(content = task))
+                val contentId = problem.problemId
+                val content = problemContentRepository.getReferenceById(contentId)
+                if (content.content != task) {
+                    problem.problemId = problemContentRepository.save(ProblemContent(content = task)).id!!
                     problemRepository.save(problem)
                 }
             }, {
-                val problem = problemContentRepository.save(ProblemContent(content = task))
-                problemRepository.save(Problem(id = it, problem = problem))
+                val contentId = problemContentRepository.save(ProblemContent(content = task)).id!!
+                problemRepository.save(Problem(id = it, problemId = contentId))
             })
         }
     }

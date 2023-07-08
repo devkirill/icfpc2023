@@ -1,5 +1,6 @@
 package icfpc.y2023.scheduled
 
+import icfpc.y2023.db.repository.ProblemContentRepository
 import icfpc.y2023.db.repository.SolutionRepository
 import icfpc.y2023.service.CalcScoringService
 import jakarta.transaction.Transactional
@@ -14,14 +15,16 @@ import java.util.*
 @ConditionalOnProperty(name = ["service.calc"], matchIfMissing = false)
 class UpdateScoresService(
     val calcMetric: CalcScoringService,
-    val solutionRepository: SolutionRepository
+    val solutionRepository: SolutionRepository,
+    val problemContentRepository: ProblemContentRepository
 ) {
     @Scheduled(fixedRateString = "2000")
     @Transactional
     fun update() {
         solutionRepository.findAllByScoreIsNull().shuffled().forEach {
             val begin = Date()
-            it.score = calcMetric.calc(it)
+            val contentId = it.problemId
+            it.score = calcMetric.calc(problemContentRepository.getReferenceById(contentId).content, it.contents)
             solutionRepository.save(it)
             println("calc ${it.id}[${it.problem.id}] at ${Date().time - begin.time}ms")
         }

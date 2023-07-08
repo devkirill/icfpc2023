@@ -1,6 +1,5 @@
 package icfpc.y2023.service
 
-import icfpc.y2023.db.model.Solution
 import icfpc.y2023.model.*
 import org.springframework.stereotype.Service
 import kotlin.math.ceil
@@ -10,13 +9,7 @@ import kotlin.math.sqrt
 class CalcScoringService {
     companion object {
         val EPS = 1e-9
-        val R = 5.0
-    }
-
-    fun calc(solution: Solution): Long {
-        val problem = solution.problem.problem.content
-        val solve = solution.contents
-        return calc(problem, solve)
+//        val R = 5.0
     }
 
     fun calc(problem: Task, solve: Solve): Long {
