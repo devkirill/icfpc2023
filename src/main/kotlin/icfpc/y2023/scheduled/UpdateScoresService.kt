@@ -21,9 +21,14 @@ class UpdateScoresService(
     @Scheduled(fixedRateString = "2000")
     fun update() {
         val begin = Date()
+        var first = true
         var res = true
         while (res && (Date().time - begin.time < 2000)) {
             res = calc()
+            if (!res && first) {
+                return
+            }
+            first = false
         }
         println("score update end at ${Date().time - begin.time}ms")
     }

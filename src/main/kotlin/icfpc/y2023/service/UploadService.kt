@@ -23,14 +23,15 @@ class UploadService(
 ) {
     @Transactional
     fun uploadBests() {
-        problemRepository.findAll().forEach { problem ->
+        for (problem in problemRepository.findAll()) {
             try {
-                val solution = solutionRepository.findBest(problem) ?: return@forEach
+                val solution = solutionRepository.findBest(problem) ?: continue
                 if (problem.lastSendedId == solution.id) {
-                    return@forEach
+                    continue
                 }
                 if (problem.bestScore == null || solution.score!! > problem.bestScore!!) {
                     upload(solution)
+                    return
                 }
             } catch (e: Throwable) {
                 e.printStackTrace()

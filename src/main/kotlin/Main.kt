@@ -7,7 +7,6 @@
 //import java.net.URL
 //import java.util.*
 //import kotlin.random.Random
-//import kotlinx.coroutines.*
 //import java.util.stream.Collectors
 //
 //val domain = "http://localhost:8888"
@@ -21,22 +20,34 @@
 ////
 ////    }
 //
-//    val problemCount = readUrl("$domain/problems").filter { it == '}' }.count()
+//    val problemCount = readUrl("$domain/problems").count { it == '}' }
 //
 //    fun testCalc(id: Int) {
 //        val problem = Task.parse(readUrl("$domain/problem/$id"))
 //
 //        val begin = Date()
-//        val result = (1..100).toList().stream().parallel().map {genRandom(problem)}.map { calc.calc(problem, it) to it }.collect(Collectors.toList()).sortedByDescending { it.first }
+//        val best =
+//            (1..2000).toList().stream()
+//                .parallel()
+//                .map { genRandom(problem) }
+//                .map { calc.calc(problem, it) to it }
+//                .collect(Collectors.toList())
+//                .maxByOrNull { it.first }!!
+//        if (best.first <= 0) {
+//            println("not found solution $id at ${Date().time - begin.time}ms")
+//            return
+//        }
 ////        val out = genRandom(problem)
 ////        calc.calc(problem, out)
-//        URL("$domain/add/$id").send(result.first().second)
+//        URL("$domain/add/$id").send(best.second)
 //        println("calc $id at ${Date().time - begin.time}ms")
 //    }
 //
-//    (1..problemCount).shuffled().forEach {
-//        println(it)
-//        testCalc(it)
+//    repeat(10) {
+//        (1..problemCount).shuffled().forEach {
+//            println(it)
+//            testCalc(it)
+//        }
 //    }
 //
 ////    testCalc(42)

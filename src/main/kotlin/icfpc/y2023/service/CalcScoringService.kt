@@ -9,10 +9,15 @@ import kotlin.math.sqrt
 class CalcScoringService {
     companion object {
         val EPS = 1e-9
-//        val R = 5.0
+        val R = 5.0
     }
 
     fun calc(problem: Task, solve: Solve): Long {
+        val list = solve.placements.mapIndexed { i, p -> i to p }
+        if (list.any { (ia, a) -> list.any { (ib, b) -> ia != ib && a dist b < 2 * R } }) {
+            return 0
+        }
+
         val lines = problem.attendees.map { att ->
             val attPoint = Point(att.x, att.y)
             val pillars = problem.pillars.map { Pillar(it.center[0], it.center[1], it.radius) }.toMutableList()
@@ -24,7 +29,7 @@ class CalcScoringService {
                     if (d < EPS || intersect(pillars, mPos, attPoint)) {
                         0L
                     } else {
-                        pillars += Pillar(mPos.x, mPos.y, 5.0)
+                        pillars += Pillar(mPos.x, mPos.y, R)
                         ceil(1_000_000.0 * att.tastes[instr] / d).toLong()
                     }
                 }
