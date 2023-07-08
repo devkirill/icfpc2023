@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 @EnableScheduling
@@ -19,8 +20,10 @@ class UpdateScoresService(
     @Transactional
     fun update() {
         solutionRepository.findAllByScoreIsNull().shuffled().forEach {
+            val begin = Date()
             it.score = calcMetric.calc(it)
             solutionRepository.save(it)
+            println("calc ${it.id}[${it.problem.id}] at ${Date().time - begin.time}ms")
         }
     }
 }
