@@ -25,8 +25,8 @@ export const Visualization: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     Promise.all([
-      get(`http://192.168.31.106:8888/problem/${problemId}`),
-      get(`http://192.168.31.106:8888/best/${problemId}/10`),
+      get(`/problem/${problemId}`),
+      get(`/best/${problemId}/10`),
     ])
       .then(([p, s]) => {
         setProblem(p);
