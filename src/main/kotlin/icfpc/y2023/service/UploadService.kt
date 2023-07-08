@@ -5,6 +5,7 @@ import icfpc.y2023.db.model.Solution
 import icfpc.y2023.db.repository.ProblemRepository
 import icfpc.y2023.db.repository.SolutionRepository
 import icfpc.y2023.db.repository.findBest
+import icfpc.y2023.utils.toJson
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -22,7 +23,7 @@ class UploadService(
 ) {
     @Transactional
     fun uploadBests() {
-        problemRepository.findAll().sortedBy { it.id }.forEach { problem ->
+        problemRepository.findAll().forEach { problem ->
             try {
                 val solution = solutionRepository.findBest(problem) ?: return@forEach
                 if (problem.lastSendedId == solution.id) {
@@ -46,10 +47,9 @@ class UploadService(
         val json = ObjectMapper().writeValueAsString(
             mapOf(
                 "problem_id" to solution.problem.id,
-                "contents" to solution.contents
+                "contents" to solution.contents.toJson()
             )
         )
-        println("upload ${solution.problem.id}(${solution.score}) - ${solution.contents}")
 
         val url = URL("https://api.icfpcontest.com/submission")
         val con: HttpURLConnection = url.openConnection() as HttpURLConnection
@@ -61,8 +61,12 @@ class UploadService(
             val input = json.toByteArray(charset("utf-8"))
             os.write(input, 0, input.size)
         }
-        println(con.responseCode)
-        println(con.responseMessage)
+        println("upload ${solution.problem.id}(${solution.score}) - ${solution.contents}")
+        if (con.responseCode !in 200..201) {
+            println(con.responseCode)
+            println(con.responseMessage)
+            return
+        }
 //        BufferedReader(
 //            InputStreamReader(con.inputStream, "utf-8")
 //        ).use { br ->

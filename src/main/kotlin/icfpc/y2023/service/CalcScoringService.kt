@@ -14,7 +14,7 @@ class CalcScoringService {
     }
 
     fun calc(solution: Solution): Long {
-        val problem = solution.problem.problem
+        val problem = solution.problem.problem.content
         val solve = solution.contents
         return calc(problem, solve)
     }

@@ -1,6 +1,8 @@
 package icfpc.y2023.service
 
 import icfpc.y2023.db.model.Problem
+import icfpc.y2023.db.model.ProblemContent
+import icfpc.y2023.db.repository.ProblemContentRepository
 import icfpc.y2023.db.repository.ProblemRepository
 import icfpc.y2023.model.Task
 import icfpc.y2023.utils.minimizeJson
@@ -9,7 +11,10 @@ import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
-class LoadProblemsService(val problemRepository: ProblemRepository) {
+class LoadProblemsService(
+    val problemRepository: ProblemRepository,
+    val problemContentRepository: ProblemContentRepository
+) {
     fun getProblemsCount(): Int {
         val html = readUrl("https://www.icfpcontest.com/problems")
         val results = Regex("\"numberOfProblems\":(\\d+)\\b").find(html)
@@ -25,12 +30,13 @@ class LoadProblemsService(val problemRepository: ProblemRepository) {
             }
             val task = Task.parse(json)
             problemRepository.findById(it).ifPresentOrElse({ problem ->
-                if (problem.problem != task) {
-                    problem.problem = task
+                if (problem.problem.content != task) {
+                    problem.problem = problemContentRepository.save(ProblemContent(content = task))
                     problemRepository.save(problem)
                 }
             }, {
-                problemRepository.save(Problem(id = it, problem = task))
+                val problem = problemContentRepository.save(ProblemContent(content = task))
+                problemRepository.save(Problem(id = it, problem = problem))
             })
         }
     }

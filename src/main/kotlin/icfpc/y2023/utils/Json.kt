@@ -9,3 +9,8 @@ fun minimizeJson(json: String): String {
     val jsonNode = objectMapper.readValue(json, JsonNode::class.java)
     return jsonNode.toString()
 }
+
+fun Any.toJson(): String {
+    val objectMapper = ObjectMapper()
+    return objectMapper.writeValueAsString(this)
+}

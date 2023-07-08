@@ -1,10 +1,8 @@
 package icfpc.y2023.db.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import icfpc.y2023.model.Task
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import org.hibernate.annotations.JdbcTypeCode
 import org.hibernate.type.SqlTypes
 
@@ -14,11 +12,25 @@ data class Problem(
     @Id
     @Column
     val id: Int,
-    @Column
-    @JdbcTypeCode(SqlTypes.JSON)
-    var problem: Task,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    @JsonIgnore
+    var problem: ProblemContent,
     @Column
     var lastSendedId: Int? = null,
     @Column
     var bestScore: Long? = null,
 )
+
+@Entity
+@Table(name = "problem_contents")
+data class ProblemContent(
+    @Id
+    @GeneratedValue
+    @Column
+    val id: Int? = null,
+    @Column
+    @JdbcTypeCode(SqlTypes.JSON)
+    val content: Task
+)
+

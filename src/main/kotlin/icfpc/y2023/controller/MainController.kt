@@ -36,7 +36,7 @@ class MainController(
     @ResponseBody
     fun getProblemTask(@PathVariable id: Int, response: HttpServletResponse): Task {
         response.setHeader("Access-Control-Allow-Origin", "*")
-        return getProblem(id).problem
+        return getProblem(id).problem.content
     }
 
     @GetMapping("/solution/get/{id}", produces = ["application/json"])

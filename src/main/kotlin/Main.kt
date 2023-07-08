@@ -3,6 +3,8 @@
 //import icfpc.y2023.model.Task
 //import icfpc.y2023.service.CalcScoringService
 //import icfpc.y2023.utils.readUrl
+//import icfpc.y2023.utils.send
+//import java.net.URL
 //import java.util.*
 //import kotlin.random.Random
 //
@@ -21,21 +23,24 @@
 //        val problem = Task.parse(readUrl("$domain/problem/$id"))
 //        val out = genRandom(problem)
 //        val begin = Date()
-//        calc.calc(problem, out)
-////        URL("$domain/add/$id?calc=true").send(out)
-//        println("calc $id at ${Date().time - begin.time}ms")
+////        calc.calc(problem, out)
+//        URL("$domain/add/$id?calc=true").send(out)
+////        println("calc $id at ${Date().time - begin.time}ms")
 //    }
 //
+//    testCalc(42)
+//    testCalc(43)
+//    testCalc(55)
 //    testCalc(18)
-//    testCalc(19)
-//    testCalc(1)
+////    testCalc(19)
+////    testCalc(1)
 //}
 //
 //fun genRandom(problem: Task): Solve {
 //    return Solve(problem.musicians.map {
 //        Point(
-//            Random.nextInt(problem.stage_width.toInt()).toDouble() + problem.stage_bottom_left[0],
-//            Random.nextInt(problem.stage_height.toInt()).toDouble() + problem.stage_bottom_left[1]
+//            Random.nextInt(problem.stage_width.toInt() - 20).toDouble() + problem.stage_bottom_left[0] + 10,
+//            Random.nextInt(problem.stage_height.toInt() - 20).toDouble() + problem.stage_bottom_left[1] + 10
 //        )
 //    })
 //}
