@@ -1,5 +1,6 @@
 package icfpc.y2023
 
+import icfpc.y2023.model.Pillar
 import icfpc.y2023.model.Point
 import icfpc.y2023.service.CalcScoringService
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,9 +17,9 @@ class Intersect {
     fun test() {
         val a = Point(0.0, 0.0)
         val b = Point(100.0, 100.0)
-        assertTrue(scoring.intersect(a, b, Point(50.0, 50.0)))
-        assertTrue(scoring.intersect(a, b, Point(52.5, 50.0)))
-        assertTrue(scoring.intersect(a, b, Point(47.5, 50.0)))
+        assertTrue(scoring.intersect(a, b, Pillar(50.0, 50.0, 5.0)))
+        assertTrue(scoring.intersect(a, b, Pillar(52.5, 50.0, 5.0)))
+        assertTrue(scoring.intersect(a, b, Pillar(47.5, 50.0, 5.0)))
     }
 
     @Test
@@ -30,7 +31,7 @@ class Intersect {
         for (x in 0 until img.width) {
             for (y in 0 until img.height) {
                 val m = Point(x.toDouble(), y.toDouble()) / 10.0
-                if (scoring.intersect(a, b, m)) {
+                if (scoring.intersect(a, b, Pillar(m.x, m.y, 5.0))) {
                     img.setRGB(x, y, Color.BLACK.rgb)
                 } else {
                     img.setRGB(x, y, Color.WHITE.rgb)
