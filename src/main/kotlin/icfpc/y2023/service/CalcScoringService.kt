@@ -20,23 +20,28 @@ class CalcScoringService {
         val problem = Task.parse(solution.problem.problem)
         val solve = Solve.parse(solution.contents)
 
-        return problem.attendees.map { att ->
-            problem.musicians.mapIndexed { ind, instr ->
+        val lines = problem.attendees.map { att ->
+            val l = problem.musicians.mapIndexed { ind, instr ->
                 val mPos = solve.placements[ind]
                 val attPoint = Point(att.x, att.y)
                 val d = (attPoint - mPos).sqrSize()
                 if (d < EPS || intersect(
                         solve.placements.filterIndexed { i, _ -> i != ind },
                         mPos,
-                        Point(att.x, att.y)
+                        attPoint
                     )
                 ) {
                     0L
                 } else {
                     ceil(1_000_000.0 * att.tastes[instr] / d).toLong()
                 }
-            }.sumOf { it }
-        }.sumOf { it }
+            }
+            l.sum() to l
+        }
+
+//        println(lines.joinToString("\n") { it.second.joinToString("\t") })
+
+        return lines.sumOf { it.first }
     }
 
     fun intersect(musicians: List<Point>, a: Point, b: Point): Boolean {
@@ -45,11 +50,10 @@ class CalcScoringService {
 
     fun intersect(p1: Point, p2: Point, m: Point): Boolean {
         val n = p2 - p1
-        val mp = n * (n scalar (m - p1)) / n.sqrSize()
+        val mp = p1 + n * (n scalar (m - p1)) / n.sqrSize()
         if ((m dist mp) > R - EPS) return false
         if ((p1 dist mp) + (p2 dist mp) <= (p1 dist p2) + EPS) return true
-//        if (p1 dist m > R - EPS || p2 dist m > R - EPS) return false
-//        return true
+        if (p1 dist m < R + EPS || p2 dist m < R + EPS) return true
         return false
     }
 

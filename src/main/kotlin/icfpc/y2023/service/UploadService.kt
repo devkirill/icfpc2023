@@ -25,6 +25,9 @@ class UploadService(
         problemRepository.findAll().sortedBy { it.id }.forEach { problem ->
             try {
                 val solution = solutionRepository.findBest(problem) ?: return@forEach
+                if (problem.lastSendedId == solution.id) {
+                    return@forEach
+                }
                 if (problem.bestScore == null || solution.score!! > problem.bestScore!!) {
                     upload(solution)
                 }
