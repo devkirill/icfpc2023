@@ -21,8 +21,10 @@ class CalcScoringService {
         val lines = problem.attendees.map { att ->
             val attPoint = Point(att.x, att.y)
             val pillars = problem.pillars.map { Pillar(it.center[0], it.center[1], it.radius) }.toMutableList()
-            val l = problem.musicians
-                .mapIndexed { ind, instr -> instr to solve.placements[ind] }
+            val l = solve.placements
+                .mapIndexed { ind, mPos -> problem.musicians[ind] to mPos }
+//                problem.musicians
+//                .mapIndexed { ind, instr -> instr to solve.placements[ind] }
                 .sortedBy { it.second dist attPoint }
                 .map { (instr, mPos) ->
                     val d = (attPoint - mPos).sqrSize()
