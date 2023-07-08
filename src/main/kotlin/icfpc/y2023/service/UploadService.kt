@@ -65,7 +65,7 @@ class UploadService(
             val input = json.toByteArray(charset("utf-8"))
             os.write(input, 0, input.size)
         }
-        println("upload ${solution.problem.id}(${solution.score}) - ${solution.contents}")
+        println("upload ${solution.problem.id}(${solution.score})")
         if (con.responseCode !in 200..201) {
             println(con.responseCode)
             println(con.responseMessage)

@@ -17,6 +17,13 @@ class CalcScoringService {
         if (list.any { (ia, a) -> list.any { (ib, b) -> ia != ib && a dist b < 2 * R } }) {
             return 0
         }
+        if (problem.stage_bottom_left[0] + 10.0 > solve.placements.minOfOrNull { it.x }!! ||
+            problem.stage_bottom_left[1] + 10.0 > solve.placements.minOfOrNull { it.y }!! ||
+            problem.stage_bottom_left[0] + problem.stage_width - 10.0 < solve.placements.maxOfOrNull { it.x }!! ||
+            problem.stage_bottom_left[1] + problem.stage_height - 10.0 < solve.placements.maxOfOrNull { it.y }!!
+        ) {
+            return 0
+        }
 
         val lines = problem.attendees.map { att ->
             val attPoint = Point(att.x, att.y)
