@@ -33,17 +33,18 @@
 //                .map { calc.calc(problem, it) to it }
 //                .collect(Collectors.toList())
 //                .maxByOrNull { it.first }!!
-//        if (best.first <= 0) {
-//            println("not found solution $id at ${Date().time - begin.time}ms")
-//            return
-//        }
+////        if (best.first <= 0) {
+////            println("not found solution $id at ${Date().time - begin.time}ms")
+////            return
+////        }
+//
 ////        val out = genRandom(problem)
 ////        calc.calc(problem, out)
 //        URL("$domain/add/$id").send(best.second)
 //        println("calc $id at ${Date().time - begin.time}ms")
 //    }
 //
-//    repeat(10) {
+//    repeat(1) {
 //        (1..problemCount).shuffled().forEach {
 //            println(it)
 //            testCalc(it)
