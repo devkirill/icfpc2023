@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 class UploadBestSolutionsService(
     val uploadService: UploadService
 ) {
-    @Scheduled(fixedRateString = "5000")
+    @Scheduled(fixedRateString = "30000")
     fun update() {
         uploadService.uploadBests()
     }

@@ -33,6 +33,8 @@ fun <A> URL.send(obj: A) {
         val input = json.toByteArray(charset("utf-8"))
         os.write(input, 0, input.size)
     }
-    println(con.responseCode)
-    println(con.responseMessage)
+    if (con.responseCode != 200) {
+        throw IllegalStateException("${con.responseCode} - ${con.responseMessage}")
+    }
+//    println(con.responseMessage)
 }

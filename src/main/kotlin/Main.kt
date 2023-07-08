@@ -7,6 +7,8 @@
 //import java.net.URL
 //import java.util.*
 //import kotlin.random.Random
+//import kotlinx.coroutines.*
+//import java.util.stream.Collectors
 //
 //val domain = "http://localhost:8888"
 //
@@ -19,19 +21,28 @@
 ////
 ////    }
 //
+//    val problemCount = readUrl("$domain/problems").filter { it == '}' }.count()
+//
 //    fun testCalc(id: Int) {
 //        val problem = Task.parse(readUrl("$domain/problem/$id"))
-//        val out = genRandom(problem)
+//
 //        val begin = Date()
+//        val result = (1..100).toList().stream().parallel().map {genRandom(problem)}.map { calc.calc(problem, it) to it }.collect(Collectors.toList()).sortedByDescending { it.first }
+////        val out = genRandom(problem)
 ////        calc.calc(problem, out)
-//        URL("$domain/add/$id?calc=true").send(out)
-////        println("calc $id at ${Date().time - begin.time}ms")
+//        URL("$domain/add/$id").send(result.first().second)
+//        println("calc $id at ${Date().time - begin.time}ms")
 //    }
 //
-//    testCalc(42)
-//    testCalc(43)
-//    testCalc(55)
-//    testCalc(18)
+//    (1..problemCount).shuffled().forEach {
+//        println(it)
+//        testCalc(it)
+//    }
+//
+////    testCalc(42)
+////    testCalc(43)
+////    testCalc(55)
+////    testCalc(18)
 ////    testCalc(19)
 ////    testCalc(1)
 //}
@@ -39,8 +50,8 @@
 //fun genRandom(problem: Task): Solve {
 //    return Solve(problem.musicians.map {
 //        Point(
-//            Random.nextInt(problem.stage_width.toInt() - 20).toDouble() + problem.stage_bottom_left[0] + 10,
-//            Random.nextInt(problem.stage_height.toInt() - 20).toDouble() + problem.stage_bottom_left[1] + 10
+//            Random.nextInt(problem.stage_width.toInt() - 20 + 1).toDouble() + problem.stage_bottom_left[0] + 10.0,
+//            Random.nextInt(problem.stage_height.toInt() - 20 + 1).toDouble() + problem.stage_bottom_left[1] + 10.0
 //        )
 //    })
 //}

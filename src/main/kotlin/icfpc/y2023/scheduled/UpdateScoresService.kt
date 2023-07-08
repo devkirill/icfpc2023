@@ -19,14 +19,25 @@ class UpdateScoresService(
     val problemContentRepository: ProblemContentRepository
 ) {
     @Scheduled(fixedRateString = "2000")
-    @Transactional
     fun update() {
-        solutionRepository.findAllByScoreIsNull().shuffled().forEach {
-            val begin = Date()
-            val contentId = it.problemId
-            it.score = calcMetric.calc(problemContentRepository.getReferenceById(contentId).content, it.contents)
-            solutionRepository.save(it)
-            println("calc ${it.id}[${it.problem.id}] at ${Date().time - begin.time}ms")
+        val begin = Date()
+        var res = true
+        while (res && (Date().time - begin.time < 2000)) {
+            res = calc()
         }
+        println("score update end at ${Date().time - begin.time}ms")
+    }
+
+    @Transactional
+    fun calc(): Boolean {
+        val id = solutionRepository.findNotCalculated().shuffled().firstOrNull() ?: return false
+        val begin = Date()
+        val solution = solutionRepository.getReferenceById(id)
+        val contentId = solution.problemId
+        solution.score =
+            calcMetric.calc(problemContentRepository.getReferenceById(contentId).content, solution.contents)
+        solutionRepository.save(solution)
+        println("calc ${solution.id}[${solution.problem.id}] at ${Date().time - begin.time}ms")
+        return true
     }
 }
