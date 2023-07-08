@@ -5,15 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper
 
 data class Task(
     @JsonProperty("room_width")
-    val width: Double,
+    val room_width: Double,
     @JsonProperty("room_height")
-    val height: Double,
+    val room_height: Double,
     @JsonProperty("stage_width")
-    val stageWidth: Double,
+    val stage_width: Double,
     @JsonProperty("stage_height")
-    val stageHeight: Double,
+    val stage_height: Double,
     @JsonProperty("stage_bottom_left")
-    val stageBottomLeft: List<Double>,
+    val stage_bottom_left: List<Double>,
     @JsonProperty("musicians")
     val musicians: List<Int>,
     @JsonProperty("attendees")

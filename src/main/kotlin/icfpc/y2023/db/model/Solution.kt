@@ -1,7 +1,10 @@
 package icfpc.y2023.db.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import icfpc.y2023.model.Solve
 import jakarta.persistence.*
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 
 @Entity
 @Table(name = "solutions")
@@ -15,7 +18,8 @@ data class Solution(
     @JsonIgnore
     val problem: Problem,
     @Column
-    val contents: String,
+    @JdbcTypeCode(SqlTypes.JSON)
+    val contents: Solve,
     @Column
     var score: Long? = null
 ) {

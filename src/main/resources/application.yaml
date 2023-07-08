@@ -2,7 +2,9 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: 'jdbc:postgresql://localhost:5432/icfpc'
+    #    url: 'jdbc:postgresql://c-c9qkihub5cu0l6cj6f4p.rw.mdb.yandexcloud.net:6432/db_icfpc'
     username: 'icfpc'
+    #    password: 'MerX6^ryu3)p#y_'
     password: '2023'
   jpa:
     database: postgresql

@@ -3,8 +3,6 @@ package icfpc.y2023.service
 import icfpc.y2023.db.model.Solution
 import icfpc.y2023.model.Attendees
 import icfpc.y2023.model.Point
-import icfpc.y2023.model.Solve
-import icfpc.y2023.model.Task
 import org.springframework.stereotype.Service
 import kotlin.math.ceil
 import kotlin.math.sqrt
@@ -17,8 +15,8 @@ class CalcScoringService {
     }
 
     fun calc(solution: Solution): Long {
-        val problem = Task.parse(solution.problem.problem)
-        val solve = Solve.parse(solution.contents)
+        val problem = solution.problem.problem
+        val solve = solution.contents
 
         val lines = problem.attendees.map { att ->
             val l = problem.musicians.mapIndexed { ind, instr ->
