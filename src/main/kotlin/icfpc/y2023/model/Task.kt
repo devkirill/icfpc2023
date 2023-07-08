@@ -19,7 +19,7 @@ data class Task(
     @JsonProperty("attendees")
     val attendees: List<Attendees>,
     @JsonProperty("pillars")
-    val pillars: List<String>?
+    val pillars: List<Pillars>
 ) {
     companion object {
         fun parse(json: String): Task {
@@ -35,4 +35,11 @@ data class Attendees(
     val y: Double,
     @JsonProperty("tastes")
     val tastes: List<Double>
+)
+
+data class Pillars(
+    @JsonProperty("center")
+    val center: List<Double>,
+    @JsonProperty("radius")
+    val radius: Double
 )

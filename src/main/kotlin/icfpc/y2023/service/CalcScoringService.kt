@@ -1,8 +1,7 @@
 package icfpc.y2023.service
 
 import icfpc.y2023.db.model.Solution
-import icfpc.y2023.model.Attendees
-import icfpc.y2023.model.Point
+import icfpc.y2023.model.*
 import org.springframework.stereotype.Service
 import kotlin.math.ceil
 import kotlin.math.sqrt
@@ -17,23 +16,25 @@ class CalcScoringService {
     fun calc(solution: Solution): Long {
         val problem = solution.problem.problem
         val solve = solution.contents
+        return calc(problem, solve)
+    }
 
+    fun calc(problem: Task, solve: Solve): Long {
         val lines = problem.attendees.map { att ->
-            val l = problem.musicians.mapIndexed { ind, instr ->
-                val mPos = solve.placements[ind]
-                val attPoint = Point(att.x, att.y)
-                val d = (attPoint - mPos).sqrSize()
-                if (d < EPS || intersect(
-                        solve.placements.filterIndexed { i, _ -> i != ind },
-                        mPos,
-                        attPoint
-                    )
-                ) {
-                    0L
-                } else {
-                    ceil(1_000_000.0 * att.tastes[instr] / d).toLong()
+            val attPoint = Point(att.x, att.y)
+            val pillars = problem.pillars.map { Pillar(it.center[0], it.center[1], it.radius) }.toMutableList()
+            val l = problem.musicians
+                .mapIndexed { ind, instr -> instr to solve.placements[ind] }
+                .sortedBy { it.second dist attPoint }
+                .map { (instr, mPos) ->
+                    val d = (attPoint - mPos).sqrSize()
+                    if (d < EPS || intersect(pillars, mPos, attPoint)) {
+                        0L
+                    } else {
+                        pillars += Pillar(mPos.x, mPos.y, 5.0)
+                        ceil(1_000_000.0 * att.tastes[instr] / d).toLong()
+                    }
                 }
-            }
             l.sum() to l
         }
 
@@ -42,16 +43,18 @@ class CalcScoringService {
         return lines.sumOf { it.first }
     }
 
-    fun intersect(musicians: List<Point>, a: Point, b: Point): Boolean {
+    fun intersect(musicians: List<Pillar>, a: Point, b: Point): Boolean {
         return musicians.any { intersect(a, b, it) }
     }
 
-    fun intersect(p1: Point, p2: Point, m: Point): Boolean {
+    fun intersect(p1: Point, p2: Point, p: Pillar): Boolean {
+        val m = Point(p.x, p.y)
+        val r = p.r
         val n = p2 - p1
         val mp = p1 + n * (n scalar (m - p1)) / n.sqrSize()
-        if ((m dist mp) > R - EPS) return false
-        if ((p1 dist mp) + (p2 dist mp) <= (p1 dist p2) + EPS) return true
-        if (p1 dist m < R + EPS || p2 dist m < R + EPS) return true
+        if ((m dist mp) > r - EPS) return false
+        if ((p1 dist mp) + (p2 dist mp) < (p1 dist p2) + EPS) return true
+        if (p1 dist m < r + EPS || p2 dist m < r + EPS) return true
         return false
     }
 
