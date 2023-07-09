@@ -7,7 +7,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Problem, Solution } from "./types";
 import { useNavigate } from "react-router-dom";
@@ -18,25 +18,26 @@ function get(url: string) {
 
 export const Visualization: React.FC = () => {
   const { problemId, solutionId } = useParams();
+  const navigate = useNavigate();
+
   const [problem, setProblem] = useState(null as Problem | null);
   const [solutions, setSolutions] = useState(null as Solution[] | null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      get(`/problem/${problemId}`),
-      get(`/best/${problemId}/10`),
-    ])
-      .then(([p, s]) => {
+    Promise.all([get(`/problem/${problemId}`), get(`/best/${problemId}/10`)])
+      .then(([p, s]: [Problem, Solution[]]) => {
         setProblem(p);
         setSolutions(s);
+        if (s.length > 0)
+          navigate(`/problems/${problemId}/solutions/${s[0].id}`);
       })
       .finally(() => {
         setLoading(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [problemId]);
-  const navigate = useNavigate();
 
   return (
     <div className="App">
