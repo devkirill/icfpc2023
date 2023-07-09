@@ -6,6 +6,7 @@ import icfpc.y2023.model.Task
 import icfpc.y2023.service.CalcScoringService
 import icfpc.y2023.utils.readUrl
 import icfpc.y2023.utils.send
+import icfpc.y2023.db.model.Solution
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import utils.domain
@@ -21,18 +22,34 @@ class SeparateAlgorithmTestsV2 {
         @JvmStatic
         fun ids(): List<Int> {
             return (1..getProblemsCount()).toList().shuffled()
-//            return listOf(88)
         }
     }
 
-    @ParameterizedTest
-    @MethodSource("ids")
+    // @ParameterizedTest
+    // @MethodSource("ids")
     fun test2(id: Int) {
         val problem = Task.parse(readUrl("$domain/problem/$id"))
         val solution = getPlaceFor(problem)
         var score = scoring.calc(problem, solution)
         URL("$domain/add/$id?calc=true").send(solution)
         println("score for $id: $score")
+    }
+
+    @ParameterizedTest
+    @MethodSource("ids")
+    fun enchancer(id: Int) {
+        val problem = Task.parse(readUrl("$domain/problem/$id"))
+        val oldSolution = Solution.parse(readUrl("$domain/best/$id"))
+        val solved = oldSolution.contents
+        val properSolution = addVolume(problem, solved.placements)
+
+        var scoreNew = scoring.calc(problem, properSolution)
+        var scoreOld = scoring.calc(problem, solved)
+        println("scores for $id: new $scoreNew, old $scoreOld, stored ${oldSolution.score}")
+        if (scoreNew > scoreOld || scoreOld != oldSolution.score) {
+            URL("$domain/add/$id?calc=true").send(properSolution)
+            println("problem $id updated")
+        }
     }
 
 
@@ -56,6 +73,13 @@ class SeparateAlgorithmTestsV2 {
             cells -= cell
             mPoints += cell
         }
-        return Solve(mPoints.toList(), (1..mPoints.size).map { 10.0 })
+        val placement = mPoints.toList()
+        return addVolume(problem, placement)
+    }
+
+    fun addVolume(problem: Task, placement: List<Point>): Solve {
+        val influenceCoeff = scoring.calcInfluencesWithoutVolume(problem, placement)
+            .map { if (it > 0) 10.0 else 0.0 }
+        return Solve(placement, influenceCoeff)
     }
 }
