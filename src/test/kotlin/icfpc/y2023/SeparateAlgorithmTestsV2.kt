@@ -45,8 +45,8 @@ class SeparateAlgorithmTestsV2 {
 
         var scoreNew = scoring.calc(problem, properSolution)
         var scoreOld = scoring.calc(problem, solved)
-        println("scores for $id: new $scoreNew, old $scoreOld, stored $oldSolution.score")
-        if (scoreNew > scoreNew || scoreOld != oldSolution.score) {
+        println("scores for $id: new $scoreNew, old $scoreOld, stored ${oldSolution.score}")
+        if (scoreNew > scoreOld || scoreOld != oldSolution.score) {
             URL("$domain/add/$id?calc=true").send(properSolution)
             println("problem $id updated")
         }
