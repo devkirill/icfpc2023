@@ -11,7 +11,7 @@ val domain = "http://localhost:8080"
 
 fun getProblemsCount() = readUrl("${domain}/problems").count { it == '}' }
 
-fun getCells(problem: Task, scale: Boolean = false): List<Point> {
+fun getCells(problem: Task, scale: Boolean = true): List<Point> {
     val cells = (0..(problem.stage_width.toInt() - 20) step 10).flatMap { x ->
         (0..(problem.stage_height.toInt() - 20) step 10).map { y ->
             Point(
@@ -24,9 +24,9 @@ fun getCells(problem: Task, scale: Boolean = false): List<Point> {
         return cells
     }
     val coefX =
-        (problem.stage_bottom_left[0] + problem.stage_width - 20) / (cells.maxOfOrNull { it.x }!! - cells.minOfOrNull { it.x }!!)
+        (problem.stage_width - 20) / (cells.maxOfOrNull { it.x }!! - cells.minOfOrNull { it.x }!!)
     val coefY =
-        (problem.stage_bottom_left[1] + problem.stage_height - 20) / (cells.maxOfOrNull { it.y }!! - cells.minOfOrNull { it.y }!!)
+        (problem.stage_height - 20) / (cells.maxOfOrNull { it.y }!! - cells.minOfOrNull { it.y }!!)
     return cells.map {
         val x = if (coefX.isNaN()) {
             it.x

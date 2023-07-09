@@ -9,6 +9,7 @@ import icfpc.y2023.utils.send
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import utils.domain
+import utils.filterBorder
 import utils.getCells
 import utils.getProblemsCount
 import java.net.URL
@@ -35,7 +36,7 @@ class SeparateAlgorithmTests {
 
 
     fun getPlaceFor(problem: Task): Solve {
-        val cells = getCells(problem).toMutableSet()
+        val cells = filterBorder(problem, getCells(problem), 10).toMutableSet()
         println("cellssize ${cells.size}")
         println("cells ${cells}")
         val mPoints = mutableListOf<Point>()
