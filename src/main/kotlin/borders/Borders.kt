@@ -13,7 +13,7 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-val domain = "http://localhost:8888"
+val domain = "http://localhost:8080"
 
 private val calc = CalcScoringService()
 

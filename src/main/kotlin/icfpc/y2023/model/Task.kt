@@ -17,7 +17,7 @@ data class Task(
     @JsonProperty("musicians")
     val musicians: List<Int>,
     @JsonProperty("attendees")
-    val attendees: List<Attendees>,
+    val attendees: List<Attendee>,
     @JsonProperty("pillars")
     val pillars: List<Pillars>
 ) {
@@ -28,7 +28,7 @@ data class Task(
     }
 }
 
-data class Attendees(
+data class Attendee(
     @JsonProperty("x")
     val x: Double,
     @JsonProperty("y")

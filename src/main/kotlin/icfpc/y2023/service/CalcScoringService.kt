@@ -12,17 +12,30 @@ class CalcScoringService {
         val R = 5.0
     }
 
+
+    fun calcSimpleInfluence(instr: Int, mPos: Point, att: Attendee): Long {
+        val attPoint = Point(att.x, att.y)
+        val d = (attPoint - mPos).sqrSize()
+        return if (d < EPS) {
+            0L
+        } else {
+            ceil(1_000_000.0 * att.tastes[instr] / d).toLong()
+        }
+    }
+
     fun calc(problem: Task, solve: Solve): Long {
         val list = solve.placements.mapIndexed { i, p -> i to p }
         if (list.any { (ia, a) -> list.any { (ib, b) -> ia != ib && a dist b < 2 * R } }) {
-            return 0
+            println("intersect")
+            return Long.MIN_VALUE
         }
         if (problem.stage_bottom_left[0] + 10.0 > solve.placements.minOfOrNull { it.x }!! ||
             problem.stage_bottom_left[1] + 10.0 > solve.placements.minOfOrNull { it.y }!! ||
             problem.stage_bottom_left[0] + problem.stage_width - 10.0 < solve.placements.maxOfOrNull { it.x }!! ||
             problem.stage_bottom_left[1] + problem.stage_height - 10.0 < solve.placements.maxOfOrNull { it.y }!!
         ) {
-            return 0
+            println("stage")
+            return Long.MIN_VALUE
         }
 
         val lines = problem.attendees.map { att ->
@@ -69,7 +82,7 @@ class CalcScoringService {
         return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))
     }
 
-    fun dist(a: Attendees, b: Point): Double {
+    fun dist(a: Attendee, b: Point): Double {
         return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))
     }
 }
