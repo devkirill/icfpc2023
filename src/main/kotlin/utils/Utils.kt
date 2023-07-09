@@ -11,7 +11,7 @@ val domain = "http://localhost:8080"
 
 fun getProblemsCount() = readUrl("${domain}/problems").count { it == '}' }
 
-fun getCells(problem: Task, scale: Boolean = true): List<Point> {
+fun getCells(problem: Task, scale: Boolean = false): List<Point> {
     val cells = (0..(problem.stage_width.toInt() - 20) step 10).flatMap { x ->
         (0..(problem.stage_height.toInt() - 20) step 10).map { y ->
             Point(

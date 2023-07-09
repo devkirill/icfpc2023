@@ -35,7 +35,7 @@ class SeparateAlgorithmTests {
 
 
     fun getPlaceFor(problem: Task): Solve {
-        val cells = getCells(problem, false).toMutableSet()
+        val cells = getCells(problem).toMutableSet()
         println("cellssize ${cells.size}")
         println("cells ${cells}")
         val mPoints = mutableListOf<Point>()

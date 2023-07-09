@@ -37,7 +37,7 @@ class SeparateAlgorithmTestsV2 {
 
 
     fun getPlaceFor(problem: Task): Solve {
-        val sourceCells = getCells(problem, false).shuffled()
+        val sourceCells = getCells(problem).shuffled()
         var dist = 1
         val cells = filterBorder(problem, sourceCells, dist = dist).toMutableSet()
         println("cellssize ${cells.size}")
