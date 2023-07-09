@@ -3,6 +3,7 @@ package utils
 import icfpc.y2023.model.Point
 import icfpc.y2023.model.Task
 import icfpc.y2023.utils.readUrl
+import java.util.stream.Collectors
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToLong
@@ -55,4 +56,8 @@ fun List<Point>.filterBorder(problem: Task, dist: Int = 1): List<Point> {
         )
         min(a, b) < (dist + 1) * 10.0
     }
+}
+
+fun <T, R> Collection<T>.pmap(mapper: (T) -> R): List<R> {
+    return this.stream().parallel().map { mapper(it) }.collect(Collectors.toList())
 }

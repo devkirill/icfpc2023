@@ -49,6 +49,18 @@ class CalcScoringService {
 
     }
 
+    fun calcWithPillars(problem: Task, instr: Int, mPos: Point, pillars: List<Pillar>): Long {
+        var result = 0L
+        for (att in problem.attendees) {
+            val attPoint = Point(att.x, att.y)
+            val d = (attPoint - mPos).sqrSize()
+            if (d > EPS && !intersect(pillars, mPos, attPoint)) {
+                result += ceil(1_000_000.0 * att.tastes[instr] / d).toLong()
+            }
+        }
+        return result
+    }
+
     fun calc(problem: Task, solve: Solve): Long {
         val list = solve.placements.mapIndexed { i, p -> i to p }
         if (list.any { (ia, a) -> list.any { (ib, b) -> ia != ib && a dist b < 2 * R } }) {
