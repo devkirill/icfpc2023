@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+	application
 	id("org.springframework.boot") version "3.1.1"
 	id("io.spring.dependency-management") version "1.1.0"
 	kotlin("jvm") version "1.8.22"
@@ -13,6 +14,10 @@ version = "0.0.1-SNAPSHOT"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_17
+}
+
+application {
+	mainClass.set("icfpc.y2023.Icfpc2023ApplicationKt")
 }
 
 repositories {
