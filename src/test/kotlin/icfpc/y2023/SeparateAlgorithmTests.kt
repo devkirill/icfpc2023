@@ -36,9 +36,10 @@ class SeparateAlgorithmTests {
 
 
     fun getPlaceFor(problem: Task): Solve {
-        val cells = filterBorder(problem, getCells(problem), 10).toMutableSet()
+        val cells = getCells(problem).filterBorder(problem, 10).toMutableSet()
         println("cellssize ${cells.size}")
         println("cells ${cells}")
+        val mSet = mutableSetOf<Point>()
         val mPoints = mutableListOf<Point>()
         for (m in problem.musicians) {
             val cell = cells.maxBy { mPos ->

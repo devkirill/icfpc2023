@@ -42,8 +42,9 @@ fun getCells(problem: Task, scale: Boolean = true): List<Point> {
     }
 }
 
-fun filterBorder(problem: Task, cells: List<Point>, dist: Int = 1): List<Point> {
-    return cells.filter {
+
+fun List<Point>.filterBorder(problem: Task, dist: Int = 1): List<Point> {
+    return filter {
         val a = min(
             abs(it.x - problem.stage_bottom_left[0]),
             abs(problem.stage_bottom_left[0] + problem.stage_width - it.x)

@@ -39,14 +39,14 @@ class SeparateAlgorithmTestsV2 {
     fun getPlaceFor(problem: Task): Solve {
         val sourceCells = getCells(problem).shuffled()
         var dist = 1
-        val cells = filterBorder(problem, sourceCells, dist = dist).toMutableSet()
+        val cells = sourceCells.filterBorder(problem, dist = dist).toMutableSet()
         println("cellssize ${cells.size}")
         println("cells ${cells}")
         val mPoints = mutableSetOf<Point>()
         for (m in problem.musicians) {
             if (cells.isEmpty()) {
                 dist++
-                cells += filterBorder(problem, sourceCells, dist = dist)
+                cells += sourceCells.filterBorder(problem, dist = dist)
                     .filter { it !in mPoints }
             }
             val cell = cells.maxBy { mPos ->
