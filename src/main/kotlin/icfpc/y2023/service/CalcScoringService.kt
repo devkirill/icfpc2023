@@ -23,6 +23,32 @@ class CalcScoringService {
         }
     }
 
+    fun calcInfluencesWithoutVolume(problem: Task, placement: List<Point>): List<Long> {
+        val influences = problem.musicians.map { 0L }.toMutableList()
+        for (att in problem.attendees) { 
+            val attPoint = Point(att.x, att.y)
+            val pillars = problem.pillars.map { Pillar(it.center[0], it.center[1], it.radius) }.toMutableList()
+            val musicianInfluencesForAtt = placement
+                .mapIndexed { ind, mPos -> Triple(ind, problem.musicians[ind], mPos) }
+                .sortedBy { it.third dist attPoint }
+                .map { (ind, instr, mPos) ->
+                    val d = (attPoint - mPos).sqrSize()
+                    if (d < EPS || intersect(pillars, mPos, attPoint)) {
+                        Pair(ind, 0L)
+                    } else {
+                        pillars += Pillar(mPos.x, mPos.y, R)
+                        Pair(ind, ceil(1_000_000.0 * att.tastes[instr] / d).toLong())
+                    }
+                }
+                .toList()
+            for ((musInd, influence) in musicianInfluencesForAtt) {
+                influences[musInd] += influence
+            }
+        }
+        return influences;
+
+    }
+
     fun calc(problem: Task, solve: Solve): Long {
         val list = solve.placements.mapIndexed { i, p -> i to p }
         if (list.any { (ia, a) -> list.any { (ib, b) -> ia != ib && a dist b < 2 * R } }) {
@@ -38,29 +64,12 @@ class CalcScoringService {
             return Long.MIN_VALUE
         }
 
-        val lines = problem.attendees.map { att ->
-            val attPoint = Point(att.x, att.y)
-            val pillars = problem.pillars.map { Pillar(it.center[0], it.center[1], it.radius) }.toMutableList()
-            val l = solve.placements
-                .mapIndexed { ind, mPos -> Triple(ind, problem.musicians[ind], mPos) }
-//                problem.musicians
-//                .mapIndexed { ind, instr -> instr to solve.placements[ind] }
-                .sortedBy { it.third dist attPoint }
-                .map { (ind, instr, mPos) ->
-                    val d = (attPoint - mPos).sqrSize()
-                    if (d < EPS || intersect(pillars, mPos, attPoint)) {
-                        0L
-                    } else {
-                        pillars += Pillar(mPos.x, mPos.y, R)
-                        ceil((solve.volumes?.get(ind) ?: 1.0) * ceil(1_000_000.0 * att.tastes[instr] / d)).toLong()
-                    }
-                }
-            l.sum() to l
-        }
+        val influences = calcInfluencesWithoutVolume(problem, solve.placements)
 
-//        println(lines.joinToString("\n") { it.second.joinToString("\t") })
-
-        return lines.sumOf { it.first }
+        return influences
+            .zip(solve.volumes ?: influences.map { 1.0 })
+            .map { (inf, vol) -> ceil(inf * vol).toLong() }
+            .sum()
     }
 
     fun intersect(musicians: List<Pillar>, a: Point, b: Point): Boolean {
