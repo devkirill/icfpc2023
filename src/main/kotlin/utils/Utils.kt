@@ -31,3 +31,5 @@ fun getCells(problem: Task): List<Point> {
         Point(x, y)
     }
 }
+
+//fun getborder

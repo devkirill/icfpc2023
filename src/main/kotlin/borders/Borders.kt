@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
 
         val begin = Date()
         val best =
-            (1..100).toList().stream()
+            (1..250).toList().stream()
                 .parallel()
                 .map { genRandom(problem, dist) }
                 .map { calc.calc(problem, it) to it }
@@ -64,7 +64,7 @@ fun main(args: Array<String>) {
         println("calc $id at ${Date().time - begin.time}ms")
     }
 
-    repeat(2) {
+    repeat(5) {
         (1..problemCount)
 //            .shuffled()
             .forEach {
