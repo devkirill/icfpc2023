@@ -47,6 +47,6 @@ class SeparateAlgorithmTests {
             cells -= cell
             mPoints += cell
         }
-        return Solve(mPoints)
+        return Solve(mPoints, (1..mPoints.size).map { 10.0 })
     }
 }

@@ -42,17 +42,17 @@ class CalcScoringService {
             val attPoint = Point(att.x, att.y)
             val pillars = problem.pillars.map { Pillar(it.center[0], it.center[1], it.radius) }.toMutableList()
             val l = solve.placements
-                .mapIndexed { ind, mPos -> problem.musicians[ind] to mPos }
+                .mapIndexed { ind, mPos -> Triple(ind, problem.musicians[ind], mPos) }
 //                problem.musicians
 //                .mapIndexed { ind, instr -> instr to solve.placements[ind] }
-                .sortedBy { it.second dist attPoint }
-                .map { (instr, mPos) ->
+                .sortedBy { it.third dist attPoint }
+                .map { (ind, instr, mPos) ->
                     val d = (attPoint - mPos).sqrSize()
                     if (d < EPS || intersect(pillars, mPos, attPoint)) {
                         0L
                     } else {
                         pillars += Pillar(mPos.x, mPos.y, R)
-                        ceil(1_000_000.0 * att.tastes[instr] / d).toLong()
+                        ceil((solve.volumes?.get(ind) ?: 1.0) * ceil(1_000_000.0 * att.tastes[instr] / d)).toLong()
                     }
                 }
             l.sum() to l

@@ -2,7 +2,7 @@
 
 call gradlew clean
 
-call gradlew build --no-daemon
+call gradlew build --no-daemon -x test
 
 del "build\libs\*-plain.jar"
 

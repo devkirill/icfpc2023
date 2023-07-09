@@ -56,6 +56,6 @@ class SeparateAlgorithmTestsV2 {
             cells -= cell
             mPoints += cell
         }
-        return Solve(mPoints.toList())
+        return Solve(mPoints.toList(), (1..mPoints.size).map { 10.0 })
     }
 }

@@ -6,7 +6,9 @@ import kotlin.math.sqrt
 
 data class Solve(
     @JsonProperty("placements")
-    val placements: List<Point>
+    val placements: List<Point>,
+    @JsonProperty("volumes")
+    val volumes: List<Double>? = (1..placements.size).map { 10.0 }
 ) {
     companion object {
         fun parse(json: String): Solve {
