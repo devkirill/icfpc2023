@@ -1,38 +1,31 @@
 package icfpc.y2023
 
-import icfpc.y2023.model.Pillar
 import icfpc.y2023.model.Point
-import icfpc.y2023.model.Task
 import icfpc.y2023.model.Solve
+import icfpc.y2023.model.Task
 import icfpc.y2023.service.CalcScoringService
 import icfpc.y2023.utils.readUrl
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
-import org.junit.jupiter.params.provider.MethodSource
-import java.awt.Color
-import java.awt.image.BufferedImage
-import java.io.File
-import java.net.URL
-import javax.imageio.ImageIO
-import utils.getCells
 import icfpc.y2023.utils.send
-import kotlin.math.*
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import utils.domain
+import utils.getCells
+import utils.getProblemsCount
+import java.net.URL
 
 class SeparateAlgorithmTests {
     val scoring = CalcScoringService()
+
     companion object {
         @JvmStatic
         fun ids(): List<Int> {
-            return (1..90).toList()
+            return (1..getProblemsCount()).toList()
         }
     }
 
     @ParameterizedTest
     @MethodSource("ids")
     fun test2(id: Int) {
-        val domain = "http://localhost:8080"
         val problem = Task.parse(readUrl("$domain/problem/$id"))
         val solution = getPlaceFor(problem)
         var score = scoring.calc(problem, solution)

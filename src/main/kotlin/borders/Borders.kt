@@ -5,6 +5,7 @@ import icfpc.y2023.model.Task
 import icfpc.y2023.service.CalcScoringService
 import icfpc.y2023.utils.readUrl
 import icfpc.y2023.utils.send
+import utils.domain
 import utils.getCells
 import java.net.URL
 import java.util.*
@@ -12,8 +13,6 @@ import java.util.stream.Collectors
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-
-val domain = "http://localhost:8080"
 
 private val calc = CalcScoringService()
 
