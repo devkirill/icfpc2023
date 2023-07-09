@@ -9,17 +9,19 @@ import icfpc.y2023.utils.send
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import utils.domain
+import utils.filterBorder
 import utils.getCells
 import utils.getProblemsCount
 import java.net.URL
 
-class SeparateAlgorithmTests {
+class SeparateAlgorithmTestsV2 {
     val scoring = CalcScoringService()
 
     companion object {
         @JvmStatic
         fun ids(): List<Int> {
             return (1..getProblemsCount()).toList().shuffled()
+//            return listOf(88)
         }
     }
 
@@ -35,18 +37,25 @@ class SeparateAlgorithmTests {
 
 
     fun getPlaceFor(problem: Task): Solve {
-        val cells = getCells(problem, false).toMutableSet()
+        val sourceCells = getCells(problem, false).shuffled()
+        var dist = 1
+        val cells = filterBorder(problem, sourceCells, dist = dist).toMutableSet()
         println("cellssize ${cells.size}")
         println("cells ${cells}")
-        val mPoints = mutableListOf<Point>()
+        val mPoints = mutableSetOf<Point>()
         for (m in problem.musicians) {
+            if (cells.isEmpty()) {
+                dist++
+                cells += filterBorder(problem, sourceCells, dist = dist)
+                    .filter { it !in mPoints }
+            }
             val cell = cells.maxBy { mPos ->
-                problem.attendees.map({ scoring.calcSimpleInfluence(m, mPos, it)}).sum()
+                problem.attendees.map({ scoring.calcSimpleInfluence(m, mPos, it) }).sum()
             }
             println("found best place for $m on $cell")
             cells -= cell
             mPoints += cell
         }
-        return Solve(mPoints)
+        return Solve(mPoints.toList())
     }
 }

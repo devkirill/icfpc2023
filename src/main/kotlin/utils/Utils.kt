@@ -3,6 +3,9 @@ package utils
 import icfpc.y2023.model.Point
 import icfpc.y2023.model.Task
 import icfpc.y2023.utils.readUrl
+import kotlin.math.abs
+import kotlin.math.min
+import kotlin.math.roundToLong
 
 val domain = "http://localhost:8080"
 
@@ -28,15 +31,27 @@ fun getCells(problem: Task, scale: Boolean = true): List<Point> {
         val x = if (coefX.isNaN()) {
             it.x
         } else {
-            (it.x - (problem.stage_bottom_left[0] + 10.0)) * coefX + (problem.stage_bottom_left[0] + 10.0)
+            (((it.x - (problem.stage_bottom_left[0] + 10.0)) * coefX + (problem.stage_bottom_left[0] + 10.0)) * 1000).roundToLong() / 1000.0
         }
         val y = if (coefY.isNaN()) {
             it.y
         } else {
-            (it.y - (problem.stage_bottom_left[1] + 10.0)) * coefY + (problem.stage_bottom_left[1] + 10.0)
+            (((it.y - (problem.stage_bottom_left[1] + 10.0)) * coefY + (problem.stage_bottom_left[1] + 10.0)) * 1000).roundToLong() / 1000.0
         }
         Point(x, y)
     }
 }
 
-//fun getborder
+fun filterBorder(problem: Task, cells: List<Point>, dist: Int = 1): List<Point> {
+    return cells.filter {
+        val a = min(
+            abs(it.x - problem.stage_bottom_left[0]),
+            abs(problem.stage_bottom_left[0] + problem.stage_width - it.x)
+        )
+        val b = min(
+            abs(it.y - problem.stage_bottom_left[1]),
+            abs(problem.stage_bottom_left[1] + problem.stage_height - it.y)
+        )
+        min(a, b) < (dist + 1) * 10.0
+    }
+}
