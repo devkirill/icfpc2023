@@ -78,10 +78,15 @@ class CalcScoringService {
 
         val influences = calcInfluencesWithoutVolume(problem, solve.placements)
 
+        val togetherCoeffs = solve.placements.mapIndexed { i, p ->
+            1.0 + solve.placements.filterIndexed { j, _ -> i != j }
+                .sumOf { t -> 1 / (p dist t) }
+        }
+
         return influences
             .zip(solve.volumes ?: influences.map { 1.0 })
-            .map { (inf, vol) -> ceil(inf * vol).toLong() }
-            .sum()
+            .zip(togetherCoeffs) { (a, b), c -> Triple(a, b, c) }
+            .sumOf { (inf, vol, q) -> ceil(inf * q * vol).toLong() }
     }
 
     fun intersect(musicians: List<Pillar>, a: Point, b: Point): Boolean {
