@@ -36,4 +36,6 @@ data class Point(
     infix fun dist(p: Point) = sqrt((this - p).sqrSize())
 
     fun sqrSize() = x * x + y * y
+
+    fun norm() = this / sqrt(sqrSize())
 }
