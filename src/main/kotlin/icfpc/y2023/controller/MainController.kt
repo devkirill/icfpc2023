@@ -10,6 +10,7 @@ import icfpc.y2023.model.Solve
 import icfpc.y2023.model.Task
 import icfpc.y2023.service.CalcScoringService
 import icfpc.y2023.service.LoadProblemsService
+import icfpc.y2023.service.UploadService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
@@ -21,7 +22,8 @@ class MainController(
     val problemRepository: ProblemRepository,
     val solutionRepository: SolutionRepository,
     val loadProblemsService: LoadProblemsService,
-    val problemContentRepository: ProblemContentRepository
+    val problemContentRepository: ProblemContentRepository,
+    val uploadService: UploadService
 ) {
     @GetMapping("/")
     fun index(): RedirectView {
@@ -94,10 +96,11 @@ class MainController(
         @PathVariable id: Int,
         @RequestBody solution: String,
         calc: Boolean = false,
+        upload: Boolean = false,
         response: HttpServletResponse
     ): Solution {
         response.setHeader("Access-Control-Allow-Origin", "*")
-        return Solution(problem = getProblem(id), contents = Solve.parse(solution)).apply {
+        val solution = Solution(problem = getProblem(id), contents = Solve.parse(solution)).apply {
             if (calc) {
                 val contentId = getProblem(id).problemId
                 score = calcMetric.calc(problemContentRepository.getReferenceById(contentId).content, this.contents)
@@ -105,5 +108,9 @@ class MainController(
         }.let {
             solutionRepository.save(it)
         }
+        if (upload) {
+            uploadService.upload(solution)
+        }
+        return solution
     }
 }

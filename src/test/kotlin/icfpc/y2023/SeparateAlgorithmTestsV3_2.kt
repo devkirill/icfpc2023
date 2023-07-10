@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import utils.*
 import java.net.URL
 import java.util.*
+import kotlin.math.abs
 import kotlin.math.max
 
 class SeparateAlgorithmTestsV3_2 {
@@ -20,10 +21,7 @@ class SeparateAlgorithmTestsV3_2 {
     companion object {
         @JvmStatic
         fun ids(): List<Int> {
-//            return listOf(87, 90)
-//            return listOf(11)
-            return (1..3).toList()
-//            return (1..getProblemsCount()).toList().sortedByDescending { abs(it - 18) }//.shuffled()
+            return (1..getProblemsCount()).toList().sortedByDescending { abs(it - 18) }//.shuffled()
         }
     }
 
@@ -59,7 +57,8 @@ class SeparateAlgorithmTestsV3_2 {
 
         val data = borderCells.pmap { mPos ->
             val otherPillars =
-                borderCells.filter { it != mPos }.map { Pillar(it.x, it.y, 5.0) } + extraPillars(problem, borderCells)
+                borderCells.filter { it != mPos }.map { Pillar(it.x, it.y, 5.0) } +
+                        extraPillars(problem, borderCells.filter { it != mPos })
             musicians.keys.map { instr ->
                 val score = scoring.calcWithPillars(problem, instr, mPos, pillars + otherPillars)
                 score to instr
@@ -102,7 +101,6 @@ class SeparateAlgorithmTestsV3_2 {
             }
         }
 
-
         return addVolume(problem, result.entries.sortedBy { it.key }.map { it.value })
     }
 
@@ -122,14 +120,14 @@ class SeparateAlgorithmTestsV3_2 {
         val l = cells.mapIndexed { i, a -> a to cells.filterIndexed { j, b -> i < j && a dist b < 12 } }
             .flatMap { (a, l) -> l.map { a to it } }
         return l.flatMap { (a, b) ->
-//            val c = (a + b) / 2.0
+            val c = (a + b) / 2.0
             val n = (b - a)
-            val n1 = Point(-n.y, n.x).norm() * 5.0 + a
-            val n2 = Point(n.y, -n.x).norm() * 5.0 + a
+            val n1 = Point(-n.y, n.x).norm() * 5.0 + c
+            val n2 = Point(n.y, -n.x).norm() * 5.0 + c
             val list = mutableListOf<Point>()
             if (scoring.inBorders(problem, n1)) list += n1
             if (scoring.inBorders(problem, n2)) list += n2
             list
-        }.map { Pillar(it.x, it.y, 5.0) }
+        }.map { Pillar(it.x, it.y, 5.001) }
     }
 }
