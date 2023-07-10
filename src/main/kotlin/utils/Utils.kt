@@ -24,25 +24,39 @@ fun getCells(problem: Task, scale: Boolean = true): List<Point> {
     if (!scale) {
         return cells
     }
-    val coefX =
-        (problem.stage_width - 20) / (cells.maxOfOrNull { it.x }!! - cells.minOfOrNull { it.x }!!)
-    val coefY =
-        (problem.stage_height - 20) / (cells.maxOfOrNull { it.y }!! - cells.minOfOrNull { it.y }!!)
+    val coef = getCoef(problem, cells)
     return cells.map {
-        val x = if (coefX.isNaN()) {
+        val x = if (coef.x.isNaN()) {
             it.x
         } else {
-            (((it.x - (problem.stage_bottom_left[0] + 10.0)) * coefX + (problem.stage_bottom_left[0] + 10.0)) * 1000).roundToLong() / 1000.0
+            (((it.x - (problem.stage_bottom_left[0] + 10.0)) * coef.x + (problem.stage_bottom_left[0] + 10.0)) * 1000).roundToLong() / 1000.0
         }
-        val y = if (coefY.isNaN()) {
+        val y = if (coef.y.isNaN()) {
             it.y
         } else {
-            (((it.y - (problem.stage_bottom_left[1] + 10.0)) * coefY + (problem.stage_bottom_left[1] + 10.0)) * 1000).roundToLong() / 1000.0
+            (((it.y - (problem.stage_bottom_left[1] + 10.0)) * coef.y + (problem.stage_bottom_left[1] + 10.0)) * 1000).roundToLong() / 1000.0
         }
         Point(x, y)
     }
 }
 
+fun getCoef(problem: Task, cells: List<Point>): Point {
+    val coefX =
+        (problem.stage_width - 20) / (cells.maxOfOrNull { it.x }!! - cells.minOfOrNull { it.x }!!)
+    val coefY =
+        (problem.stage_height - 20) / (cells.maxOfOrNull { it.y }!! - cells.minOfOrNull { it.y }!!)
+    val x = if (coefX.isNaN()) {
+        1.0
+    } else {
+        coefX
+    }
+    val y = if (coefY.isNaN()) {
+        1.0
+    } else {
+        coefY
+    }
+    return Point(x, y)
+}
 
 fun List<Point>.filterBorder(problem: Task, dist: Int = 1): List<Point> {
     return filter {
