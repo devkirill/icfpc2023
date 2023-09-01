@@ -151,8 +151,9 @@ class MainController(
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
 
-        g.color = Color.WHITE
-        var from = (center - Point(content.stage_width, content.stage_height) / 2.0) * 1000.0 / size
+        g.color = Color.LIGHT_GRAY
+        var from = (center - Point(content.stage_bottom_left[0], content.stage_bottom_left[1])
+                - Point(content.stage_width, content.stage_height) / 2.0) * 1000.0 / size
         from += (Point(1000.0, 1000.0) - Point(content.stage_width, content.stage_height) * 1000.0 / size) / 2.0
         g.fillRect(
             from.x.toInt(),
@@ -160,12 +161,23 @@ class MainController(
             (content.stage_width * 1000.0 / size).toInt(),
             (content.stage_height * 1000.0 / size).toInt(),
         )
+        g.color = Color.BLACK
+        g.drawRect(
+            from.x.toInt(),
+            from.y.toInt(),
+            (content.stage_width * 1000.0 / size).toInt(),
+            (content.stage_height * 1000.0 / size).toInt(),
+        )
 
         val rd = 10 * 1000.0 / size
-        g.color = Color.CYAN.darker().darker()
-        solution.contents.placements.forEach {
+        solution.contents.placements.forEachIndexed { index, it ->
+            g.color = Color.getHSBColor(
+                content.musicians[index].toFloat() / content.musicians.max(),
+                0.5F,
+                0.5F
+            )//  Color.CYAN.darker().darker()
             val a = (it - center) * 1000.0 / size + Point(500.0, 500.0)
-            val shape = Ellipse2D.Double(a.x - rd, a.y - rd, rd, rd)
+            val shape = Ellipse2D.Double(a.x - rd / 2, a.y - rd / 2, rd, rd)
             g.fill(shape)
         }
 
