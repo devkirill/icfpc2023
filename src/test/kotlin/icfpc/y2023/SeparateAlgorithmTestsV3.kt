@@ -7,6 +7,7 @@ import icfpc.y2023.model.Task
 import icfpc.y2023.service.CalcScoringService
 import icfpc.y2023.utils.readUrl
 import icfpc.y2023.utils.send
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import utils.*
@@ -25,6 +26,7 @@ class SeparateAlgorithmTestsV3 {
         }
     }
 
+    @Disabled
     @ParameterizedTest
     @MethodSource("ids")
     fun test2(id: Int) {

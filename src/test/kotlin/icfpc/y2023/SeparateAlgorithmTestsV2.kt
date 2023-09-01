@@ -1,12 +1,13 @@
 package icfpc.y2023
 
+import icfpc.y2023.db.model.Solution
 import icfpc.y2023.model.Point
 import icfpc.y2023.model.Solve
 import icfpc.y2023.model.Task
 import icfpc.y2023.service.CalcScoringService
 import icfpc.y2023.utils.readUrl
 import icfpc.y2023.utils.send
-import icfpc.y2023.db.model.Solution
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import utils.domain
@@ -35,6 +36,7 @@ class SeparateAlgorithmTestsV2 {
         println("score for $id: $score")
     }
 
+    @Disabled
     @ParameterizedTest
     @MethodSource("ids")
     fun enchancer(id: Int) {
