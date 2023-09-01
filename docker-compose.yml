@@ -1,46 +1,46 @@
 version: '3.9'
 services:
-  postgres:
-    image: postgres
+#  postgres:
+  #    image: postgres
+  #    restart: always
+  #    ports:
+  #      - "5454:5432"
+  #    environment:
+  #      POSTGRES_PASSWORD: ghjdthrf
+  #    volumes:
+  #      - './init.sql:/docker-entrypoint-initdb.d/init.sql'
+  #      - 'postgres:/var/lib/postgresql/data'
+
+  #  teamcity:
+  #    image: jetbrains/teamcity-server
+  #    depends_on:
+  #      - postgres
+  #    restart: always
+  #    ports:
+  #      - 8111:8111
+  #    volumes:
+  #      - 'teamcity:/data/teamcity_server/datadir'
+
+  #  teamcity-agent:
+  #    image: jetbrains/teamcity-agent
+  #    restart: always
+  #    environment:
+  #      SERVER_URL: 'http://<teamcity_server>:8111'
+
+  icfpc:
+    image: dev643/icfpc2023:latest
     restart: always
     ports:
-      - "5454:5432"
+      - 8888:8080
     environment:
-      POSTGRES_PASSWORD: ghjdthrf
-    volumes:
-      - './init.sql:/docker-entrypoint-initdb.d/init.sql'
-      - 'postgres:/var/lib/postgresql/data'
+      - spring.datasource.url=jdbc:postgresql://192.168.31.106:5454/icfpc
+      - spring.datasource.username=icfpc
+      - spring.datasource.password=icfpc
+      - token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiI2NGE3MDcxZGNlYTQ5YjFjNDkxYmJjYmEiLCJpYXQiOjE2ODg2NzA0ODEsImV4cCI6MTY5ODY3MDQ4MX0.-CIHI_BLZVk5-PzUhOzY73A_pZI2ZOkugUISc18BdK0
+      - service.read=false
+      - service.calc=false
+      - service.upload=false
 
-  teamcity:
-    image: jetbrains/teamcity-server
-    depends_on:
-      - postgres
-    restart: always
-    ports:
-      - 8111:8111
-    volumes:
-      - 'teamcity:/data/teamcity_server/datadir'
-
-#  teamcity-agent:
-#    image: jetbrains/teamcity-agent
-#    restart: always
-#    environment:
-#      SERVER_URL: 'http://<teamcity_server>:8111'
-
-#  icfpc:
-#    image: dev643/icfpc2023:latest
-#    restart: always
-#    ports:
-#      - 8080:8080
-#    environment:
-#      - spring.datasource.url=jdbc:postgresql://c-c9qkihub5cu0l6cj6f4p.rw.mdb.yandexcloud.net:6432/db_icfpc
-#      - spring.datasource.password=MerX6^ryu3)p#y_
-#      - spring.datasource.username=icfpc
-#      - token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiI2NGE3MDcxZGNlYTQ5YjFjNDkxYmJjYmEiLCJpYXQiOjE2ODg2NzA0ODEsImV4cCI6MTY5ODY3MDQ4MX0.-CIHI_BLZVk5-PzUhOzY73A_pZI2ZOkugUISc18BdK0
-#      - service.read=false
-#      - service.calc=true
-#      - service.upload=true
-#
 #  icfpc-read:
 #    image: dev643/icfpc2023:latest
 #    restart: always
