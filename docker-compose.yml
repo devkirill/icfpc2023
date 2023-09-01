@@ -21,6 +21,12 @@ services:
     volumes:
       - 'teamcity:/data/teamcity_server/datadir'
 
+#  teamcity-agent:
+#    image: jetbrains/teamcity-agent
+#    restart: always
+#    environment:
+#      SERVER_URL: 'http://<teamcity_server>:8111'
+
 #  icfpc:
 #    image: dev643/icfpc2023:latest
 #    restart: always
