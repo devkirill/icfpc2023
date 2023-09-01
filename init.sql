@@ -1,0 +1,17 @@
+CREATE ROLE teamcity WITH
+    LOGIN
+    NOSUPERUSER
+    NOCREATEDB
+    NOCREATEROLE
+    INHERIT
+    NOREPLICATION
+    CONNECTION LIMIT -1
+    PASSWORD 'teamcity';
+
+CREATE
+DATABASE teamcity
+    WITH
+    OWNER = teamcity
+    ENCODING = 'UTF8'
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
