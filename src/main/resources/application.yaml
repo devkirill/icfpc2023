@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: 'jdbc:postgresql://localhost:5432/icfpc'
+    url: 'jdbc:postgresql://localhost:5454/icfpc'
     username: 'icfpc'
-    password: '2023'
+    password: 'icfpc'
     hikari:
       maximum-pool-size: 2
   jpa:
