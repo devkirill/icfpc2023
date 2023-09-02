@@ -130,55 +130,52 @@ class MainController(
     @ResponseBody
     fun getImage(
         @PathVariable id: Int,
+        imgSize: Int?,
         response: HttpServletResponse
     ): ResponseEntity<ByteArray> {
         response.setHeader("Access-Control-Allow-Origin", "*")
-        val image = BufferedImage(1000, 1000, BufferedImage.TYPE_INT_ARGB)
         val solution = solutionRepository.getReferenceById(id)
         val content = problemContentRepository.getReferenceById(solution.problemId).content
 
-        val size = max(content.stage_width, content.stage_height)
+        val size = max(content.stage_width, content.stage_height) * 1.05
         val center = Point(
             content.stage_bottom_left[0] + content.stage_width / 2,
             content.stage_bottom_left[1] + content.stage_height / 2
         )
+        val image = ImageDraw(imgSize ?: 1000, center, size) {
+            color = Color.LIGHT_GRAY
+            fillRect(
+                Point(content.stage_bottom_left[0], content.stage_bottom_left[1]),
+                content.stage_width,
+                content.stage_height,
+            )
+            color = Color.BLACK
+            drawRect(
+                Point(content.stage_bottom_left[0], content.stage_bottom_left[1]),
+                content.stage_width,
+                content.stage_height,
+            )
 
-        val g = image.graphics as Graphics2D
+            solution.contents.placements.forEachIndexed { index, it ->
+                color = Color.getHSBColor(
+                    content.musicians[index].toFloat() / content.musicians.max(),
+                    0.5F,
+                    0.5F
+                )
+                fillCircle(it, 5.0)
+            }
 
-        g.color = Color(255, 0, 255, 0)
-        g.fillRect(0, 0, 1000, 1000)
+            color = Color.LIGHT_GRAY
 
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+            content.pillars.forEach { pillar  ->
+                fillCircle(Point(pillar.center[0], pillar.center[1]), pillar.radius)
+            }
 
-        g.color = Color.LIGHT_GRAY
-        var from = (center - Point(content.stage_bottom_left[0], content.stage_bottom_left[1])
-                - Point(content.stage_width, content.stage_height) / 2.0) * 1000.0 / size
-        from += (Point(1000.0, 1000.0) - Point(content.stage_width, content.stage_height) * 1000.0 / size) / 2.0
-        g.fillRect(
-            from.x.toInt(),
-            from.y.toInt(),
-            (content.stage_width * 1000.0 / size).toInt(),
-            (content.stage_height * 1000.0 / size).toInt(),
-        )
-        g.color = Color.BLACK
-        g.drawRect(
-            from.x.toInt(),
-            from.y.toInt(),
-            (content.stage_width * 1000.0 / size).toInt(),
-            (content.stage_height * 1000.0 / size).toInt(),
-        )
+            color = Color.MAGENTA.darker()
 
-        val rd = 10 * 1000.0 / size
-        solution.contents.placements.forEachIndexed { index, it ->
-            g.color = Color.getHSBColor(
-                content.musicians[index].toFloat() / content.musicians.max(),
-                0.5F,
-                0.5F
-            )//  Color.CYAN.darker().darker()
-            val a = (it - center) * 1000.0 / size + Point(500.0, 500.0)
-            val shape = Ellipse2D.Double(a.x - rd / 2, a.y - rd / 2, rd, rd)
-            g.fill(shape)
+            content.attendees.forEach { attendee ->
+                fillCircle(Point(attendee.x, attendee.y), 5.0)
+            }
         }
 
         val baos = ByteArrayOutputStream()
@@ -188,5 +185,118 @@ class MainController(
         return ResponseEntity.ok()
             .contentType(MediaType.IMAGE_PNG)
             .body(baos.toByteArray())
+    }
+
+    @GetMapping("/img2/{id}")
+    @ResponseBody
+    fun getImage2(
+        @PathVariable id: Int,
+        imgSize: Int? = null,
+        response: HttpServletResponse
+    ): ResponseEntity<ByteArray> {
+        response.setHeader("Access-Control-Allow-Origin", "*")
+        val solution = solutionRepository.getReferenceById(id)
+        val content = problemContentRepository.getReferenceById(solution.problemId).content
+
+        val size = max(content.attendees.map { it.x }.max() + 5.0, content.attendees.map { it.y }.max() + 5.0)
+        val center = Point(
+            (content.attendees.map { it.x }.max() + 5.0) / 2,
+            (content.attendees.map { it.y }.max() + 5.0) / 2
+        )
+        val image = ImageDraw(imgSize ?: 1000, center, size) {
+            color = Color.LIGHT_GRAY
+            fillRect(
+                Point(content.stage_bottom_left[0], content.stage_bottom_left[1]),
+               content.stage_width,
+                content.stage_height,
+            )
+            color = Color.BLACK
+            drawRect(
+                Point(content.stage_bottom_left[0], content.stage_bottom_left[1]),
+                content.stage_width,
+                content.stage_height,
+            )
+
+            solution.contents.placements.forEachIndexed { index, it ->
+                color = Color.getHSBColor(
+                    content.musicians[index].toFloat() / content.musicians.max(),
+                    0.5F,
+                    0.5F
+                )
+                fillCircle(it, 5.0)
+            }
+
+            color = Color.LIGHT_GRAY
+
+            content.pillars.forEach { pillar  ->
+                fillCircle(Point(pillar.center[0], pillar.center[1]), pillar.radius)
+            }
+
+            color = Color.MAGENTA.darker()
+
+            content.attendees.forEach { attendee ->
+                fillCircle(Point(attendee.x, attendee.y), 5.0)
+            }
+        }
+
+        val baos = ByteArrayOutputStream()
+        ImageIO.write(image, "PNG", baos)
+        baos.toByteArray()
+
+        return ResponseEntity.ok()
+            .contentType(MediaType.IMAGE_PNG)
+            .body(baos.toByteArray())
+    }
+}
+
+data class ImageDraw(val size: Int, val center: Point, val scale: Double, val image: BufferedImage) {
+    val g2d = image.graphics as Graphics2D
+
+    var color: Color
+        get() {
+            TODO()
+        }
+        set(value) {
+            g2d.color = value
+        }
+
+    init {
+        color = Color(255, 0, 255, 0)
+        g2d.fillRect(0, 0, size, size)
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+    }
+
+    companion object {
+        operator fun invoke(size: Int, center: Point, scale: Double, draw: ImageDraw.() -> Unit): BufferedImage {
+            val image = BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB)
+            val drawI = ImageDraw(size, center, scale, image)
+            drawI.draw()
+            return drawI.image
+        }
+    }
+
+    infix fun Point.pMul(a: Point) = Point(this.x * a.x, this.y * a.y)
+    infix fun Point.pDiv(a: Point) = Point(this.x / a.x, this.y / a.y)
+
+    fun convert(p: Point) = ((p - center) * size.toDouble() / scale) + Point(size.toDouble() / 2, size.toDouble() / 2)
+    fun convert(d: Double) = d * size.toDouble() / scale
+
+    fun fillCircle(p: Point, r: Double) {
+        val a = convert(p)
+        val rd = convert(r)
+
+        val shape = Ellipse2D.Double(a.x - rd, a.y - rd, rd * 2, rd * 2)
+        g2d.fill(shape)
+    }
+
+    fun fillRect(from: Point, width: Double, height: Double) {
+        val a = convert(from)
+        g2d.fillRect( a.x.toInt(), a.y.toInt(), convert(width).toInt(),  convert(height).toInt())
+    }
+
+    fun drawRect(from: Point, width: Double, height: Double) {
+        val a = convert(from)
+        g2d.drawRect( a.x.toInt(), a.y.toInt(), convert(width).toInt(),  convert(height).toInt())
     }
 }
