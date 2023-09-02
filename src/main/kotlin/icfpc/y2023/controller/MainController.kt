@@ -38,9 +38,7 @@ class MainController(
     val uploadService: UploadService
 ) {
     @GetMapping("/")
-    fun index(): RedirectView {
-        return RedirectView("/index.html")
-    }
+    fun index(): String = "index"
 
     @GetMapping("/problems")
     @ResponseBody
