@@ -2,10 +2,7 @@ package icfpc.y2023.controller
 
 import icfpc.y2023.db.model.Problem
 import icfpc.y2023.db.model.Solution
-import icfpc.y2023.db.repository.ProblemContentRepository
-import icfpc.y2023.db.repository.ProblemRepository
-import icfpc.y2023.db.repository.SolutionRepository
-import icfpc.y2023.db.repository.findBest
+import icfpc.y2023.db.repository.*
 import icfpc.y2023.model.Point
 import icfpc.y2023.model.Solve
 import icfpc.y2023.model.Task
@@ -16,8 +13,8 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.servlet.view.RedirectView
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.RenderingHints
@@ -38,7 +35,13 @@ class MainController(
     val uploadService: UploadService
 ) {
     @GetMapping("/")
-    fun index(): String = "index"
+    fun index(model: Model): String {
+        val solutions = solutionRepository.findLast()
+
+        model.addAttribute("solutions", solutions)
+
+        return "index"
+    }
 
     @GetMapping("/problems")
     @ResponseBody
@@ -286,6 +289,7 @@ data class ImageDraw(val size: Int, val center: Point, val scale: Double, val im
 
         val shape = Ellipse2D.Double(a.x - rd, a.y - rd, rd * 2, rd * 2)
         g2d.fill(shape)
+//        image.setRGB(a.x.toInt(), a.y.toInt(), g2d.color.rgb)
     }
 
     fun fillRect(from: Point, width: Double, height: Double) {

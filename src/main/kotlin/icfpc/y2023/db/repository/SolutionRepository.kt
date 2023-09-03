@@ -13,9 +13,13 @@ interface SolutionRepository : JpaRepository<Solution, Int> {
 
     @Query("select id from Solution where score is null")
     fun findNotCalculated(): List<Int>
+
+    fun findAllByOrderByIdDesc(pageable: Pageable): List<Solution>
 }
 
 fun SolutionRepository.findBest(problem: Problem) = findFirstByProblemAndScoreIsNotNullOrderByScoreDescIdAsc(problem)
 
 fun SolutionRepository.findBest(problem: Problem, limit: Int) =
     findAllByProblemAndScoreIsNotNullOrderByScoreDescIdAsc(problem, Pageable.ofSize(limit))
+
+fun SolutionRepository.findLast(limit: Int = 100) = findAllByOrderByIdDesc(Pageable.ofSize(limit))

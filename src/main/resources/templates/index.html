@@ -7,15 +7,13 @@
 <body>
     <div class="container text-center">
         <div class="row">
-            <div class="col">
-                Column
-            </div>
-            <div class="col">
-                Column
-            </div>
-            <div class="col">
-                Column
-            </div>
+            <table>
+                <tr th:each="solution: ${solutions}">
+                    <td th:text="${solution.id}"></td>
+                    <td><img th:src="'/img/'+${solution.id}+'?imgSize=100'"></td>
+                    <td th:text="${solution.problem.id}"></td>
+                </tr>
+            </table>
         </div>
     </div>
 <script>
