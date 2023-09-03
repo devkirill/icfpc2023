@@ -7,11 +7,12 @@
 <body>
     <div class="container text-center">
         <div class="row">
-            <table>
+            <table class="table align-middle table-striped">
                 <tr th:each="solution: ${solutions}">
-                    <td th:text="${solution.id}"></td>
-                    <td><img th:src="'/img/'+${solution.id}+'?imgSize=100'"></td>
+                    <td scope="row" th:text="${solution.id}"></td>
+                    <td><img th:src="'/img/'+${solution.id}+'?imgSize=150'"></td>
                     <td th:text="${solution.problem.id}"></td>
+                    <td th:text="${solution.score}"></td>
                 </tr>
             </table>
         </div>

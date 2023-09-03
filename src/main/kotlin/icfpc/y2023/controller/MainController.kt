@@ -172,7 +172,7 @@ class MainController(
                 fillCircle(Point(pillar.center[0], pillar.center[1]), pillar.radius)
             }
 
-            color = Color.MAGENTA.darker()
+            color = Color(0xFF, 0xFD, 0xD0)
 
             content.attendees.forEach { attendee ->
                 fillCircle(Point(attendee.x, attendee.y), 5.0)
@@ -233,7 +233,7 @@ class MainController(
                 fillCircle(Point(pillar.center[0], pillar.center[1]), pillar.radius)
             }
 
-            color = Color.MAGENTA.darker()
+            color = Color(0xFF, 0xFD, 0xD0)
 
             content.attendees.forEach { attendee ->
                 fillCircle(Point(attendee.x, attendee.y), 5.0)
