@@ -104,6 +104,7 @@ services:
       CHOWN_HOME: yes
     volumes:
       - './workspace:/home/jovyan/workspace'
+      - './problems:/home/jovyan/problems'
 
 networks:
   icfpc:
