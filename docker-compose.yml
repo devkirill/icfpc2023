@@ -1,5 +1,33 @@
 version: '3.9'
 services:
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - icfpc
+    environment:
+      POSTGRES_PASSWORD: 'ghjdthrf'
+    volumes:
+      - './init.sql:/docker-entrypoint-initdb.d/init.sql'
+      - 'postgres:/var/lib/postgresql/data'
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - icfpc
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'user@test.com'
+      PGADMIN_DEFAULT_PASSWORD: 'ghjdthrf'
+    volumes:
+      #      - 'C:/docker/servers.json:/pgadmin4/servers.json'
+      - 'pgadmin:/var/lib/pgadmin'
 #  postgres:
   #    image: postgres
   #    restart: always
@@ -27,13 +55,19 @@ services:
   #    environment:
   #      SERVER_URL: 'http://<teamcity_server>:8111'
 
-  icfpc:
+  server:
+#    image: dev643/icfpc2024
+#    build: .
     image: dev643/icfpc2023:latest
-    restart: always
+#    restart: always
+    depends_on:
+      - postgres
     ports:
-      - 8888:8080
+      - 8080:8080
+    networks:
+      - icfpc
     environment:
-      - spring.datasource.url=jdbc:postgresql://192.168.31.106:5454/icfpc
+      - spring.datasource.url=jdbc:postgresql://postgres:5432/icfpc
       - spring.datasource.username=icfpc
       - spring.datasource.password=icfpc
       - token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOiI2NGE3MDcxZGNlYTQ5YjFjNDkxYmJjYmEiLCJpYXQiOjE2ODg2NzA0ODEsImV4cCI6MTY5ODY3MDQ4MX0.-CIHI_BLZVk5-PzUhOzY73A_pZI2ZOkugUISc18BdK0
@@ -55,6 +89,26 @@ services:
 #      - service.calc=false
 #      - service.upload=false
 
+  kotlin_notebook:
+    container_name: kotlin_notebook
+    image: ghcr.io/knonm/kotlin-notebook:latest
+    depends_on:
+      - server
+    ports:
+      - "9999:8888"
+    networks:
+      - icfpc
+    environment:
+      JUPYTER_TOKEN: easy
+      JUPYTER_ENABLE_LAB: yes
+      CHOWN_HOME: yes
+    volumes:
+      - './workspace:/home/jovyan/workspace'
+
+networks:
+  icfpc:
+    driver: bridge
+
 volumes:
   postgres:
-  teamcity:
+  pgadmin:

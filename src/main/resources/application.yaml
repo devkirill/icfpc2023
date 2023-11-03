@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: 'jdbc:postgresql://localhost:5454/icfpc'
+    url: 'jdbc:postgresql://localhost:5432/icfpc'
     username: 'icfpc'
     password: 'icfpc'
     hikari:
