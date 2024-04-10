@@ -19,22 +19,23 @@ class SeparateAlgorithmTestsV3_1 {
     val scoring = CalcScoringService()
 
     companion object {
+        val tag = "v3.1"
         @JvmStatic
         fun ids(): List<Int> {
 //            return listOf(87, 90)
 //            return listOf(11)
-            return (1..getProblemsCount()).toList().sortedByDescending { abs(it - 18) }//.shuffled()
+            return getProblems(tag)
+//            return (1..getProblemsCount()).toList().sortedByDescending { abs(it - 18) }//.shuffled()
         }
     }
 
-    @Disabled
     @ParameterizedTest
     @MethodSource("ids")
     fun test2(id: Int) {
         val problem = Task.parse(readUrl("$domain/problem/$id"))
         val solution = getPlaceFor(problem)
         val score = scoring.calc(problem, solution)
-        URL("$domain/add/$id?calc=true").send(solution)
+        URL("$domain/solution/$id?calc=true&tag=$tag").send(solution)
         println("score for $id: $score")
     }
 

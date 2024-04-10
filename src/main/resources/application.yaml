@@ -18,3 +18,12 @@ service:
   upload: false
 
 token: ''
+junit:
+  jupiter:
+    execution:
+      parallel:
+        enabled: 'true'
+        mode:
+          classes:
+            default: 'concurrent'
+          default: 'concurrent'

@@ -1,5 +1,8 @@
 package utils
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.json.JsonMapper
 import icfpc.y2023.model.Point
 import icfpc.y2023.model.Task
 import icfpc.y2023.utils.readUrl
@@ -8,9 +11,14 @@ import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToLong
 
-val domain = "http://localhost:8080"
+val domain = "http://localhost:8080/api"
 
 fun getProblemsCount() = readUrl("${domain}/problems").count { it == '}' }
+
+fun getProblems(tag: String): List<Int> =
+    readUrl("${domain}/problem/tag?tag=$tag").let {
+        ObjectMapper().readValue(it, IntArray::class.java).toList()
+    }
 
 fun getCells(problem: Task, scale: Boolean = true): List<Point> {
     val cells = (0..(problem.stage_width.toInt() - 20) step 10).flatMap { x ->

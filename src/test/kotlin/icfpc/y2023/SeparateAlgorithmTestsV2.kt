@@ -10,33 +10,30 @@ import icfpc.y2023.utils.send
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import utils.domain
-import utils.filterBorder
-import utils.getCells
-import utils.getProblemsCount
+import utils.*
 import java.net.URL
 
 class SeparateAlgorithmTestsV2 {
     val scoring = CalcScoringService()
 
     companion object {
+        val tag = "v2"
         @JvmStatic
         fun ids(): List<Int> {
-            return (1..getProblemsCount()).toList().shuffled()
+            return getProblems(tag)
         }
     }
 
-    // @ParameterizedTest
-    // @MethodSource("ids")
+     @ParameterizedTest
+     @MethodSource("ids")
     fun test2(id: Int) {
         val problem = Task.parse(readUrl("$domain/problem/$id"))
         val solution = getPlaceFor(problem)
         var score = scoring.calc(problem, solution)
-        URL("$domain/add/$id?calc=true").send(solution)
+        URL("$domain/solution/$id?calc=true&tag=${tag}").send(solution)
         println("score for $id: $score")
     }
 
-    @Disabled
     @ParameterizedTest
     @MethodSource("ids")
     fun enchancer(id: Int) {
@@ -49,7 +46,7 @@ class SeparateAlgorithmTestsV2 {
         var scoreOld = scoring.calc(problem, solved)
         println("scores for $id: new $scoreNew, old $scoreOld, stored ${oldSolution.score}")
         if (scoreNew > scoreOld || scoreOld != oldSolution.score) {
-            URL("$domain/add/$id?calc=true").send(properSolution)
+            URL("$domain/solution/$id?calc=true&tag=${tag}").send(properSolution)
             println("problem $id updated")
         }
     }
