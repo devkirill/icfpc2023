@@ -35,7 +35,7 @@ class SeparateAlgorithmTestsV3 {
         val problem = Task.parse(readUrl("$domain/problem/$id"))
         val solution = getPlaceFor(problem)
         val score = scoring.calc(problem, solution)
-        URL("$domain/solution/$id?calc=true&tag=$tag").send(solution)
+        URL("$domain/solution/$id?calc=true&tags=$tag").send(solution)
         println("score for $id: $score")
     }
 

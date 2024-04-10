@@ -30,26 +30,26 @@ class SeparateAlgorithmTestsV2 {
         val problem = Task.parse(readUrl("$domain/problem/$id"))
         val solution = getPlaceFor(problem)
         var score = scoring.calc(problem, solution)
-        URL("$domain/solution/$id?calc=true&tag=${tag}").send(solution)
+        URL("$domain/solution/$id?calc=true&tags=${tag}").send(solution)
         println("score for $id: $score")
     }
 
-    @ParameterizedTest
-    @MethodSource("ids")
-    fun enchancer(id: Int) {
-        val problem = Task.parse(readUrl("$domain/problem/$id"))
-        val oldSolution = Solution.parse(readUrl("$domain/best/$id"))
-        val solved = oldSolution.contents
-        val properSolution = addVolume(problem, solved.placements)
-
-        var scoreNew = scoring.calc(problem, properSolution)
-        var scoreOld = scoring.calc(problem, solved)
-        println("scores for $id: new $scoreNew, old $scoreOld, stored ${oldSolution.score}")
-        if (scoreNew > scoreOld || scoreOld != oldSolution.score) {
-            URL("$domain/solution/$id?calc=true&tag=${tag}").send(properSolution)
-            println("problem $id updated")
-        }
-    }
+//    @ParameterizedTest
+//    @MethodSource("ids")
+//    fun enchancer(id: Int) {
+//        val problem = Task.parse(readUrl("$domain/problem/$id"))
+//        val oldSolution = Solution.parse(readUrl("$domain/best/$id"))
+//        val solved = oldSolution.contents
+//        val properSolution = addVolume(problem, solved.placements)
+//
+//        var scoreNew = scoring.calc(problem, properSolution)
+//        var scoreOld = scoring.calc(problem, solved)
+//        println("scores for $id: new $scoreNew, old $scoreOld, stored ${oldSolution.score}")
+//        if (scoreNew > scoreOld || scoreOld != oldSolution.score) {
+//            URL("$domain/solution/$id?calc=true&tag=${tag}").send(properSolution)
+//            println("problem $id updated")
+//        }
+//    }
 
 
     fun getPlaceFor(problem: Task): Solve {
